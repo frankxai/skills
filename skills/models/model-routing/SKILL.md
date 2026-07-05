@@ -1,7 +1,8 @@
 ---
 name: model-routing
 description: Intelligent model selection - routes tasks to Haiku (fast/cheap), Sonnet (balanced), or Opus (complex/strategic) based on task complexity analysis
-version: 1.0.0
+metadata:
+  version: 1.0.0
 ---
 
 # Model Routing System

@@ -1,7 +1,8 @@
 ---
 name: agent-design-review
 description: Use when the user asks to review, grill, pressure-test, or sanity-check an AI agent or multi-agent system design before building it — triggers include "grill me on my design", "design review", "review my agent architecture", "is this architecture sound", "pressure-test this before I build". Interrogates the design against the four failure modes that kill enterprise agent initiatives and returns a go / no-go verdict with ranked fixes.
-version: 1.0.0
+metadata:
+  version: 1.0.0
 ---
 
 # Agent Design Review
