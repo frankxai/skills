@@ -25,6 +25,8 @@ I design AI systems for enterprises by day and run a multi-agent creator stack a
 
 The skills here are the distilled countermeasures: small, composable, model-agnostic.
 
+**Start here:** [`agent-design-review`](skills/reviews/agent-design-review/SKILL.md) — a user-invoked skill that grills your agent-system design against all four failure modes and hands back a build / fix-first / rethink verdict. Run it before you write code, not after production teaches you the same lesson.
+
 ## Install
 
 Install all skills. Inside a coding agent the CLI installs them non-interactively; in a plain terminal it prompts you to pick:
@@ -37,8 +39,11 @@ Manual, air-gapped, or Windows without the CLI: clone this repo and copy any `sk
 
 ## Catalog
 
+Two kinds of skills. **User-invoked** ones you run deliberately — a review, a session you start. **Model-invoked** ones fire on their own when the work matches their description.
+
 | Skill | Category | Invocation | Fires when |
 |---|---|---|---|
+| [agent-design-review](skills/reviews/agent-design-review/SKILL.md) | reviews | **user-invoked** | you ask to grill / pressure-test an agent design before building |
 | [claude-md](skills/context/claude-md/SKILL.md) | context | model-invoked | writing or auditing CLAUDE.md / AGENTS.md memory files |
 | [agentic-orchestration](skills/orchestration/agentic-orchestration/SKILL.md) | orchestration | model-invoked | coordinating multiple agents: decomposition, handoffs, recovery |
 | [model-routing](skills/models/model-routing/SKILL.md) | models | model-invoked | choosing models to balance capability against cost |
@@ -49,7 +54,7 @@ Manual, air-gapped, or Windows without the CLI: clone this repo and copy any `sk
 | [openai-agentkit](skills/frameworks/openai-agentkit/SKILL.md) | frameworks | model-invoked | multi-agent systems on the OpenAI Agents SDK / AgentKit |
 | [defuddle](skills/tools/defuddle/SKILL.md) | tools | model-invoked | reading a web page as clean markdown instead of raw HTML |
 
-All launch skills are model-invoked: they fire when the work matches their description. User-invoked orchestrators (architecture-review sessions, agent councils) are the next wave — watch the repo.
+More user-invoked reviews are coming — one a week. The model-invoked disciplines fire quietly; the reviews are the ones you'll reach for by name.
 
 ## How these are built
 
