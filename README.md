@@ -1,12 +1,15 @@
 # AI Skills for AI Architects
 
-Agent skills for people accountable for AI systems in production — straight from my working `~/.claude` directory.
+[![skills.sh](https://skills.sh/b/frankxai/skills)](https://www.skills.sh/frankxai/skills)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+Agent skills for people accountable for AI systems in production — straight from my working `~/.claude` directory. MCP, orchestration, model routing, and context engineering, bundled as one architect's toolkit.
 
 ```sh
 npx skills add frankxai/skills
 ```
 
-Works with Claude Code, Cursor, Codex, and any harness that reads `SKILL.md`.
+One command, ~30 seconds. Works with Claude Code, Cursor, Gemini CLI, Windsurf, and Codex — any harness that reads `SKILL.md`.
 
 ## The four ways enterprise AI agent initiatives die
 
@@ -60,7 +63,11 @@ All launch skills are model-invoked: they fire when the work matches their descr
 - [frankxai/creator-skills](https://github.com/frankxai/creator-skills) — the creator lane: video-generation routing, Higgsfield, HyperFrames, Suno, brand systems.
 - [agentic-creator-os](https://github.com/frankxai/agentic-creator-os) — the full operating system these skills ship inside.
 - [ai-architect-academy](https://github.com/frankxai/ai-architect-academy) — the curriculum lane: the mental models behind these skills.
-- [frankx.ai](https://frankx.ai) — field notes, systems, and the newsletter.
+- [claude-skills-library](https://github.com/frankxai/claude-skills-library) — the full 100+ skill catalog these are curated from.
+
+## Newsletter
+
+One skill promoted from my private `~/.claude` set every week, with a note on the problem it solves. [Subscribe →](https://www.frankx.ai/newsletter?utm_source=github&utm_medium=readme&utm_campaign=skills)
 
 ## License
 
