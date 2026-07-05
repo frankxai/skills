@@ -1,7 +1,8 @@
 ---
 name: mcp-architecture
 description: Design and implement Model Context Protocol servers for standardized AI-to-data integration with resources, tools, prompts, and security best practices
-version: 1.0.0
+metadata:
+  version: 1.0.0
 ---
 
 # MCP Architecture Expert Skill
