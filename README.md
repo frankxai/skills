@@ -27,7 +27,7 @@ The skills here are the distilled countermeasures: small, composable, model-agno
 
 ## Install
 
-Everything (the CLI lets you select which skills to install):
+Install all skills. Inside a coding agent the CLI installs them non-interactively; in a plain terminal it prompts you to pick:
 
 ```sh
 npx skills add frankxai/skills
