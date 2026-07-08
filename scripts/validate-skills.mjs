@@ -62,6 +62,19 @@ for (const category of fs.readdirSync(ROOT)) {
     if (desc.length < 20) fail(skillFile, 'description missing or too short');
     if (desc.length > 1024) fail(skillFile, 'description over 1024 chars');
 
+    // Skill loaders substitute $<digit> as positional args, so "$0.05" in prose
+    // renders corrupted ("<args>.05") in consuming harnesses. Write "USD n" instead.
+    {
+      const lines = fs.readFileSync(skillFile, 'utf8').split(/\r?\n/);
+      let fence = false;
+      lines.forEach((ln, i) => {
+        if (/^\s*```/.test(ln)) { fence = !fence; return; }
+        if (!fence && !ln.includes('lint-allow:') && /\$\d/.test(ln)) {
+          fail(skillFile, `dollar-digit at line ${i + 1}: $<digit> corrupts at skill load — write "USD n"`);
+        }
+      });
+    }
+
     for (const f of walk(dir)) {
       const text = fs.readFileSync(f, 'utf8');
       for (const [re, label] of BANNED) {
