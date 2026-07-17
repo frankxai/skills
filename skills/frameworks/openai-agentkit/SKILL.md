@@ -1,6 +1,6 @@
 ---
 name: openai-agentkit
-description: Build production-ready multi-agent systems using OpenAI AgentKit and Agents SDK with best practices for agent orchestration, handoffs, and routines
+description: Build production-ready multi-agent systems using OpenAI AgentKit and Agents SDK with best practices for agent orchestration, handoffs, and routines. Use when building a multi-agent system on OpenAI AgentKit or the Agents SDK, or migrating legacy Swarm code to production.
 version: 1.0.0
 ---
 
@@ -128,18 +128,18 @@ Synthesis Agent (combines results)
 ### Agent Design
 
 **DO:**
-✅ Keep agents focused on single responsibilities
-✅ Provide clear, specific instructions in system prompts
-✅ Define explicit handoff conditions
-✅ Use descriptive agent names (helps with debugging)
-✅ Test agents in isolation before integration
+- Keep agents focused on single responsibilities
+- Provide clear, specific instructions in system prompts
+- Define explicit handoff conditions
+- Use descriptive agent names (helps with debugging)
+- Test agents in isolation before integration
 
 **DON'T:**
-❌ Create monolithic "do-everything" agents
-❌ Allow agents to communicate directly (use handoffs)
-❌ Over-engineer with too many specialized agents
-❌ Ignore error handling in handoffs
-❌ Skip agent boundary testing
+- Create monolithic "do-everything" agents
+- Allow agents to communicate directly (use handoffs)
+- Over-engineer with too many specialized agents
+- Ignore error handling in handoffs
+- Skip agent boundary testing
 
 ### Routine Design
 
