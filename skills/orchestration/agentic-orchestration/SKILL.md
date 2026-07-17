@@ -1,6 +1,6 @@
 ---
 name: agentic-orchestration
-description: Patterns for multi-agent coordination, task decomposition, handoffs, and workflow orchestration. Best practices for building and managing agent systems.
+description: Patterns for multi-agent coordination, task decomposition, handoffs, and workflow orchestration. Best practices for building and managing agent systems. Use when designing how multiple agents coordinate — splitting up tasks, defining handoffs, or choosing an orchestration topology.
 version: 1.0.0
 ---
 
@@ -513,22 +513,22 @@ The orchestrator coordinates specialists through weighted synthesis:
 
 ## Anti-Patterns to Avoid
 
-### ❌ God Agent
+### God Agent
 One agent that does everything - no specialization, no delegation.
 
-### ❌ Agent Explosion
+### Agent Explosion
 Too many tiny agents with overlapping responsibilities.
 
-### ❌ Lost Context
+### Lost Context
 Handoffs that don't preserve essential information.
 
-### ❌ Infinite Loops
+### Infinite Loops
 Agents that keep handing work back and forth.
 
-### ❌ Silent Failures
+### Silent Failures
 Agents that fail without proper error reporting.
 
-### ❌ Unobservable Execution
+### Unobservable Execution
 Can't see what agents are doing or why.
 
 ---

@@ -1,6 +1,6 @@
 ---
 name: claude-sdk
-description: Build autonomous AI agents using Claude Agent SDK with computer use, tool calling, MCP integration, and production best practices for Anthropic models
+description: Build autonomous AI agents using Claude Agent SDK with computer use, tool calling, MCP integration, and production best practices for Anthropic models. Use when building an agent on the Claude Agent SDK, wiring up computer-use tool calling, or integrating MCP servers into a Claude-based agent.
 version: 1.0.0
 ---
 
@@ -209,19 +209,19 @@ Attempt 1 → Error → Analyze → Attempt 2 → Error → Analyze → Attempt 
 ### Tool Selection Principles
 
 **DO:**
-✅ Provide tools relevant to the task
-✅ Use clear, descriptive names
-✅ Write detailed descriptions (Claude reads these!)
-✅ Define strict input schemas
-✅ Implement error handling in tools
-✅ Return structured, parseable outputs
+- Provide tools relevant to the task
+- Use clear, descriptive names
+- Write detailed descriptions (Claude reads these!)
+- Define strict input schemas
+- Implement error handling in tools
+- Return structured, parseable outputs
 
 **DON'T:**
-❌ Give agents tools they don't need (increases confusion)
-❌ Use ambiguous names like "handler" or "processor"
-❌ Skip input validation
-❌ Return raw error messages without context
-❌ Make tools with side effects unclear
+- Give agents tools they don't need (increases confusion)
+- Use ambiguous names like "handler" or "processor"
+- Skip input validation
+- Return raw error messages without context
+- Make tools with side effects unclear
 
 ## MCP Integration Patterns
 
