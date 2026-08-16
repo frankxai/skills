@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = path.join(import.meta.dirname, '..', 'skills');
-const ALLOWED_KEYS = new Set(['name', 'description', 'version', 'argument-hint', 'allowed-tools']);
+const ALLOWED_KEYS = new Set(['name', 'description', 'version', 'argument-hint', 'allowed-tools', 'metadata']);
 const BANNED = [
   [/[A-Z]:\\Users\\/i, 'windows user path'],
   [/\/c\/Users\//i, 'msys user path'],
