@@ -46,9 +46,14 @@ Two kinds of skills. **User-invoked** ones you run deliberately — a review, a 
 | [agent-design-review](skills/reviews/agent-design-review/SKILL.md) | reviews | **user-invoked** | you ask to grill / pressure-test an agent design before building |
 | [claude-md](skills/context/claude-md/SKILL.md) | context | model-invoked | writing or auditing CLAUDE.md / AGENTS.md memory files |
 | [agentic-orchestration](skills/orchestration/agentic-orchestration/SKILL.md) | orchestration | model-invoked | coordinating multiple agents: decomposition, handoffs, recovery |
+| [fail-closed-eval-gate](skills/orchestration/fail-closed-eval-gate/SKILL.md) | orchestration | model-invoked | an agent change is ready to merge — do not proceed without a named eval that can fail |
+| [tool-allowlist](skills/orchestration/tool-allowlist/SKILL.md) | orchestration | model-invoked | designing agent tool policies — default-deny, allowlist-only access |
+| [run-receipt](skills/orchestration/run-receipt/SKILL.md) | orchestration | model-invoked | an agent run completes — no receipt means it did not happen |
+| [agent-stop-conditions](skills/orchestration/agent-stop-conditions/SKILL.md) | orchestration | model-invoked | designing agents — encode when to stop and escalate before the agent runs |
 | [model-routing](skills/models/model-routing/SKILL.md) | models | model-invoked | choosing models to balance capability against cost |
 | [mcp-architecture](skills/mcp/mcp-architecture/SKILL.md) | mcp | model-invoked | designing an MCP server from scratch |
 | [mcp-2025-patterns](skills/mcp/mcp-2025-patterns/SKILL.md) | mcp | model-invoked | current-generation MCP questions: security, multi-server, transports |
+| [mcp-least-privilege](skills/mcp/mcp-least-privilege/SKILL.md) | mcp | model-invoked | auditing MCP server security — least-privilege per tool, scoped credentials |
 | [claude-sdk](skills/frameworks/claude-sdk/SKILL.md) | frameworks | model-invoked | building agents on the Claude Agent SDK |
 | [langgraph-patterns](skills/frameworks/langgraph-patterns/SKILL.md) | frameworks | model-invoked | graph-based agent workflows in LangGraph |
 | [openai-agentkit](skills/frameworks/openai-agentkit/SKILL.md) | frameworks | model-invoked | multi-agent systems on the OpenAI Agents SDK / AgentKit |
