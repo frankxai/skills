@@ -2,6 +2,8 @@
 
 Skills here are small, portable, and opinionated. PRs that add or sharpen one are welcome.
 
+Start with a [skill request](https://github.com/frankxai/skills/issues/new/choose) if you want feedback on the scope. Questions and working examples belong in the [shared skills discussions](https://github.com/frankxai/claude-skills-library/discussions). Follow the [code of conduct](CODE_OF_CONDUCT.md) and send security reports through the [private reporting path](SECURITY.md).
+
 ## Add a skill
 
 1. Create `skills/<category>/<name>/SKILL.md`. Categories: `mcp`, `orchestration`, `models`, `context`, `frameworks`, `tools`. New category? Say why in the PR.
@@ -24,6 +26,8 @@ node scripts/validate-skills.mjs
 ```
 
 This checks the frontmatter schema and scans for personal paths and secrets. CI runs the same check on every push — green or it doesn't merge.
+
+In your PR, state the user problem, the trigger that should activate the skill, one realistic example, any paid service or permissions it needs, and the validation result. Do not include prompts, logs, screenshots, or generated outputs containing personal data, credentials, or material you cannot share. Maintainers may ask for a smaller scope or an additional example before merging.
 
 ## What gets merged
 
