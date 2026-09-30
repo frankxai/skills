@@ -37,6 +37,17 @@ npx skills add frankxai/skills
 
 Manual, air-gapped, or Windows without the CLI: clone this repo and copy any `skills/<category>/<name>/` folder into `~/.claude/skills/<name>/`.
 
+For Codex, use the same `npx skills add frankxai/skills` command and select Codex when prompted. Codex's `plugin` command uses a separate marketplace flow; this repository is a skills pack.
+
+## Join the community
+
+- [Ask a question or share a working example](https://github.com/frankxai/claude-skills-library/discussions) in the shared skills discussion space. Include the skill name, agent, and what you tried; remove secrets and private data first.
+- [Report a bug or request a skill](https://github.com/frankxai/skills/issues/new/choose) in this repository so the change stays close to its owner.
+- [Contribute a fix or a skill](CONTRIBUTING.md) through a pull request. Reproducible examples and clear boundaries help us review it.
+- [Report a vulnerability privately](SECURITY.md). Please keep exploit details out of public issues and discussions.
+
+Our [code of conduct](CODE_OF_CONDUCT.md) applies across these spaces. [Support routes](SUPPORT.md) explain where to go for each kind of request.
+
 ## Catalog
 
 Two kinds of skills. **User-invoked** ones you run deliberately — a review, a session you start. **Model-invoked** ones fire on their own when the work matches their description.
