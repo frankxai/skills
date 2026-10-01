@@ -1,6 +1,6 @@
 ---
 name: langgraph-patterns
-description: Build production-grade agentic workflows with LangGraph using graph-based orchestration, state machines, human-in-the-loop, and advanced control flow
+description: Build production-grade agentic workflows with LangGraph using graph-based orchestration, state machines, human-in-the-loop, and advanced control flow. Use when building or debugging a LangGraph agent — graph orchestration, checkpointing, streaming, or human-in-the-loop control flow.
 version: 1.0.0
 ---
 
@@ -230,19 +230,19 @@ app.invoke(input)
 ## Best Practices
 
 **DO:**
-✅ Use checkpointing for long-running tasks
-✅ Stream outputs for better UX
-✅ Implement human approval for critical actions
-✅ Use conditional edges for complex routing
-✅ Leverage parallel execution when possible
-✅ Monitor with LangSmith in production
+- Use checkpointing for long-running tasks
+- Stream outputs for better UX
+- Implement human approval for critical actions
+- Use conditional edges for complex routing
+- Leverage parallel execution when possible
+- Monitor with LangSmith in production
 
 **DON'T:**
-❌ Use AgentExecutor (deprecated)
-❌ Skip error handling on nodes
-❌ Forget to set thread_id for stateful conversations
-❌ Over-complicate graphs unnecessarily
-❌ Ignore memory management for long conversations
+- Use AgentExecutor (deprecated)
+- Skip error handling on nodes
+- Forget to set thread_id for stateful conversations
+- Over-complicate graphs unnecessarily
+- Ignore memory management for long conversations
 
 ## Integration Examples
 

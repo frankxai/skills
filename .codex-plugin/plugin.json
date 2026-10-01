@@ -1,0 +1,19 @@
+{
+  "name": "starlight-architect",
+  "version": "1.0.0",
+  "description": "Enterprise AI architecture, MCP building, model routing, swarm orchestration, and context engineering.",
+  "author": "Frank Riemer",
+  "skills": [
+    "skills/context/context-engineering",
+    "skills/frameworks/langgraph-patterns",
+    "skills/mcp/mcp-architecture",
+    "skills/mcp/mcp-builder",
+    "skills/models/model-routing",
+    "skills/models/opus-extended-thinking",
+    "skills/orchestration/claude-flow-sparc",
+    "skills/orchestration/claude-flow-swarm",
+    "skills/orchestration/stream-chain",
+    "skills/reviews/github-code-review",
+    "skills/tools/make-mcp-reference"
+  ]
+}

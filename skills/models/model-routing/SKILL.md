@@ -1,6 +1,6 @@
 ---
 name: model-routing
-description: Intelligent model selection - routes tasks to Haiku (fast/cheap), Sonnet (balanced), or Opus (complex/strategic) based on task complexity analysis
+description: Intelligent model selection - routes tasks to Haiku (fast/cheap), Sonnet (balanced), or Opus (complex/strategic) based on task complexity analysis. Use when deciding which Claude model tier to route a task to, or when designing a model-routing policy for a multi-agent system.
 version: 1.0.0
 ---
 

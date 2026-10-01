@@ -1,0 +1,50 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/plugin.v1.json",
+  "name": "starlight-architect",
+  "version": "1.0.0",
+  "description": "Enterprise AI architecture, MCP building, model routing, swarm orchestration, and context engineering.",
+  "author": {
+    "name": "Frank Riemer",
+    "url": "https://frankx.ai",
+    "github": "frankxai"
+  },
+  "homepage": "https://github.com/frankxai/skills",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frankxai/skills.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "architect",
+    "mcp",
+    "model-routing",
+    "swarm-orchestration",
+    "context-engineering",
+    "claude-flow",
+    "agent-skills",
+    "agent-plugins"
+  ],
+  "skills": "./skills",
+  "runtimes": {
+    "codex": {
+      "supported": true,
+      "skills_dir": "./skills"
+    },
+    "claude": {
+      "supported": true,
+      "skills_dir": "./skills"
+    },
+    "grok": {
+      "supported": true,
+      "skills_dir": "./skills"
+    },
+    "antigravity": {
+      "supported": true,
+      "skills_dir": "./skills"
+    },
+    "cursor": {
+      "supported": true,
+      "skills_dir": "./skills"
+    }
+  }
+}
