@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: allowlist-trigger-lock-down-permissions
+description: "Should trigger tool-allowlist."
+tags: [trigger, should-trigger]
+runs: 1
+execution:
+  prompt: "lock down what my Claude Code agent can do. it only needs to run npm test and read files in src. write me the permissions block for settings.json"
+  max_turns: 6
+  allowed_tools: [Skill, Read]
+graders:
+  - name: skill-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?tool-allowlist"'

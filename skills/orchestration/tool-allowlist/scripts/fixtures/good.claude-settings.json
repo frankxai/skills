@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run test *)",
+      "Bash(git diff *)",
+      "Read(src/**)",
+      "Edit(src/**)",
+      "WebFetch(domain:docs.github.com)",
+      "mcp__github__get_*"
+    ],
+    "ask": [
+      "Bash(git commit *)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(~/.ssh/**)",
+      "Read(*.pem)",
+      "Bash(git push *)",
+      "Bash(curl *)"
+    ]
+  }
+}
