@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: trigger-runaway-loop
+description: "Should trigger agent-stop-conditions."
+tags: [trigger, should-trigger]
+runs: 1
+execution:
+  prompt: "my overnight agent kept calling the same search tool with the same query for two hours and burned $40. how do I stop that happening again?"
+  max_turns: 6
+  allowed_tools: [Skill, Read]
+graders:
+  - name: skill-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?agent-stop-conditions"'
