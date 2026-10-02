@@ -2,8 +2,7 @@
 
 Flags and exit codes verified against code.claude.com/docs/en/plugin-evals on 2026-10-02.
 
-Every agent run and judge call costs money, so this job runs on a release tag or by hand, not on
-every push. For per-push checks, keep a smaller suite whose graders do not call a judge (`regex`,
+Every agent run and judge call costs money, so this job runs on a release tag or by hand. For per-push checks, keep a smaller suite whose graders do not call a judge (`regex`,
 `tool_used`, `tool_order`, `file_exists`) and run it with `--ablation none`.
 
 Before you copy it:
@@ -87,7 +86,7 @@ jobs:
 ## How the steps fail
 
 Each `run:` step is its own shell, and GitHub fails the step and the job when the command exits
-non-zero. No step reads `$?`; nothing has to.
+non-zero. No step reads `$?`.
 
 | Step | Exit 0 | Exit 1 | Exit 2 |
 | :- | :- | :- | :- |
@@ -104,8 +103,7 @@ turn the job green.
 ## Making it block
 
 A workflow that only runs on tags reports after the fact. To stop a release, make the publish job
-`needs: eval`, or require the `eval` check on the branch you release from. A gate that posts a
-comment and lets the merge through is a dashboard.
+`needs: eval`, or require the `eval` check on the branch you release from.
 
 ## Running this skill's own cases
 

@@ -13,10 +13,10 @@ itself is free, offline, zero-dependency Node 18+.
 ## The gap this closes
 
 `claude plugin eval` exits 0 when every case's with-plugin score meets `--threshold`. It also
-measures the with-minus-without delta, and the docs state plainly: "The with-minus-without delta is
-reported but never changes the exit code". A plugin that scores 1.0 while the bare model also
-scores 1.0 passes CI while adding nothing. A plugin that made answers worse than no plugin at all
-passes too, as long as the absolute score clears the threshold.
+measures the with-minus-without delta, and the docs say: "The with-minus-without delta is reported
+but never changes the exit code". A plugin that scores 1.0 where the bare model also scores 1.0
+passes while adding nothing; one that makes answers worse than no plugin passes too, if its
+absolute score clears the threshold.
 
 `scripts/delta-gate.mjs` reads the run's JSON result and fails unless the plugin beat the baseline,
 the run finished, and every number it judged is comparable.
@@ -61,7 +61,7 @@ the run finished, and every number it judged is comparable.
 
 What the gate treats as failure, and why:
 
-- A missing `delta` (one-arm run, or arms not comparable) fails. Absence of evidence is not a pass.
+- A missing `delta` (one-arm run, or arms not comparable) fails.
 - `skippedPaidGraders: true` on any run fails: the docs say that run's score "isn't comparable".
 - A non-null `error` on any run fails, in either arm. Rate-limit errors do not mark a suite partial;
   the run is graded on what it produced and usually scores 0, so an errored baseline run inflates
@@ -71,7 +71,7 @@ What the gate treats as failure, and why:
 
 ## Thresholds are defaults to tune
 
-None of these numbers is a rule. Pick them from your own score history and write down why.
+None of these is a rule. Set them from your own score history and record why.
 
 | Flag | Default | Where it comes from |
 | :- | :- | :- |
@@ -106,7 +106,7 @@ Verified against code.claude.com/docs/en/plugin-evals on 2026-10-02: command fla
 JSON result fields, case layout, grader types, and the two-arm scoring exclusions.
 
 Re-verify the JSON field names and exit codes whenever `claude --version` changes minor version,
-or `schemaVersion` in a result stops being `1`. The gate refuses any other `schemaVersion` (exit 2),
-so a schema bump fails loudly instead of passing silently. The test fixtures are hand-built from
+or `schemaVersion` in a result stops being `1`. The gate refuses any other `schemaVersion` with
+exit 2. The test fixtures are hand-built from
 the documented schema, not captured from a real run; capture one real `results.json` and add it
 as a fixture when you first run the suite.

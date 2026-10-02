@@ -67,7 +67,7 @@ test('fails a case whose delta is exactly 0, naming it', () => {
   d.cases[1] = kase('summarises-diff', 0.8, 0);
   const r = gate(d);
   assert.equal(r.code, 1);
-  assert.match(r.out, /FAIL case "summarises-diff": delta 0 is not above 0; score 0\.8/);
+  assert.match(r.out, /FAIL case "summarises-diff" \(delta 0, score 0\.8\): delta is not above 0/);
 });
 
 test('fails a case whose delta is negative, naming it with delta and score', () => {
@@ -75,7 +75,7 @@ test('fails a case whose delta is negative, naming it with delta and score', () 
   d.cases[1] = kase('summarises-diff', 0.7, -0.3);
   const r = gate(d);
   assert.equal(r.code, 1);
-  assert.match(r.out, /FAIL case "summarises-diff": delta -0\.3 is not above 0; score 0\.7/);
+  assert.match(r.out, /FAIL case "summarises-diff" \(delta -0\.3, score 0\.7\): delta is not above 0/);
 });
 
 test('a missing delta is a failure, never a pass', () => {
@@ -83,7 +83,7 @@ test('a missing delta is a failure, never a pass', () => {
   d.cases[0] = kase('resumes-transcript', 1.0, undefined);
   const r = gate(d);
   assert.equal(r.code, 1);
-  assert.match(r.out, /FAIL case "resumes-transcript": no comparable delta/);
+  assert.match(r.out, /FAIL case "resumes-transcript" \(delta n\/a, score 1\): no comparable delta/);
 });
 
 test('a single-arm run with no meanDelta fails the suite check', () => {
@@ -99,7 +99,7 @@ test('fails a run whose judge graders were skipped at the cost ceiling', () => {
   d.cases[0].arms.with[2].skippedPaidGraders = true;
   const r = gate(d);
   assert.equal(r.code, 1);
-  assert.match(r.out, /FAIL case "drafts-commit-message": with-arm run 3 skipped its judge graders/);
+  assert.match(r.out, /FAIL case "drafts-commit-message" \(delta 0\.5, score 1\): with-arm run 3 skipped its judge graders/);
 });
 
 test('fails when a baseline run errored, since it can inflate the delta', () => {
@@ -107,7 +107,7 @@ test('fails when a baseline run errored, since it can inflate the delta', () => 
   d.cases[1].arms.without[0].error = 'rate limit reached';
   const r = gate(d);
   assert.equal(r.code, 1);
-  assert.match(r.out, /FAIL case "summarises-diff": without-arm run 1 ended abnormally: rate limit reached/);
+  assert.match(r.out, /FAIL case "summarises-diff" \(delta 0\.2, score 0\.8\): without-arm run 1 ended abnormally: rate limit reached/);
 });
 
 test('fails a run aborted by a mock expectation', () => {
@@ -115,7 +115,7 @@ test('fails a run aborted by a mock expectation', () => {
   d.cases[0].arms.with[0].aborted = { server: 'tracker', tool: 'create_issue', reason: 'title is not a string' };
   const r = gate(d);
   assert.equal(r.code, 1);
-  assert.match(r.out, /FAIL case "drafts-commit-message": with-arm run 1 aborted by mock tracker\/create_issue/);
+  assert.match(r.out, /FAIL case "drafts-commit-message" \(delta 0\.5, score 1\): with-arm run 1 aborted by mock tracker\/create_issue/);
 });
 
 test('fails a case with no baseline runs recorded', () => {
@@ -123,7 +123,7 @@ test('fails a case with no baseline runs recorded', () => {
   d.cases[1].arms.without = [];
   const r = gate(d);
   assert.equal(r.code, 1);
-  assert.match(r.out, /FAIL case "summarises-diff": no without-arm runs recorded/);
+  assert.match(r.out, /FAIL case "summarises-diff" \(delta 0\.2, score 0\.8\): no without-arm runs recorded/);
 });
 
 test('fails when meanDelta is not above --min-delta', () => {
@@ -149,7 +149,7 @@ test('--min-positive-share below 1 tolerates a flat case but still names it', ()
   d.cases[1] = kase('summarises-diff', 0.8, 0);
   const r = gate(d, '--min-positive-share', '0.5');
   assert.equal(r.code, 0, r.out);
-  assert.match(r.out, /note case "summarises-diff": delta 0 is not above 0/);
+  assert.match(r.out, /note case "summarises-diff" \(delta 0, score 0\.8\): delta is not above 0/);
 });
 
 test('--min-positive-share fails when too few cases beat the baseline', () => {
@@ -158,7 +158,7 @@ test('--min-positive-share fails when too few cases beat the baseline', () => {
   const r = gate(d, '--min-positive-share', '0.75');
   assert.equal(r.code, 1);
   assert.match(r.out, /FAIL suite: only 2 of 4 cases have delta above 0/);
-  assert.match(r.out, /note case "fourth": delta -0\.1/);
+  assert.match(r.out, /note case "fourth" \(delta -0\.1, score 0\.9\)/);
 });
 
 test('--json reports failures as data with the same exit code', () => {
@@ -168,7 +168,7 @@ test('--json reports failures as data with the same exit code', () => {
   assert.equal(r.code, 1);
   const out = JSON.parse(r.out);
   assert.equal(out.pass, false);
-  assert.deepEqual(out.failures[0], { case: 'summarises-diff', delta: -0.3, score: 0.7, reason: 'delta -0.3 is not above 0; score 0.7' });
+  assert.deepEqual(out.failures[0], { case: 'summarises-diff', delta: -0.3, score: 0.7, reason: 'delta is not above 0' });
 });
 
 test('exit 2 on a partial run, with its reason', () => {

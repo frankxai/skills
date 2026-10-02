@@ -65,13 +65,13 @@ function evaluate(doc, opts) {
     const fail = (reason) => failures.push({ case: name, delta: Number.isFinite(delta) ? delta : null, score: Number.isFinite(score) ? score : null, reason });
 
     if (!Number.isFinite(delta)) {
-      fail(`no comparable delta (single-arm run or arms not comparable); score ${fmt(score)}`);
+      fail('no comparable delta (single-arm run or arms not comparable)');
     } else if (delta > 0) {
       positive++;
     } else {
-      const line = `delta ${fmt(delta)} is not above 0; score ${fmt(score)}`;
+      const line = 'delta is not above 0';
       if (opts.minPositiveShare >= 1) fail(line);
-      else notes.push(`case "${name}": ${line}`);
+      else notes.push(`case "${name}" (delta ${fmt(delta)}, score ${fmt(score)}): ${line}`);
     }
 
     for (const arm of ['with', 'without']) {
@@ -130,7 +130,7 @@ function main() {
   if (opts.json) {
     console.log(JSON.stringify({ exitCode, ...result }, null, 2));
   } else {
-    for (const f of result.failures) console.log(`FAIL case "${f.case}": ${f.reason}`);
+    for (const f of result.failures) console.log(`FAIL case "${f.case}" (delta ${fmt(f.delta)}, score ${fmt(f.score)}): ${f.reason}`);
     for (const s of result.suite) console.log(`FAIL suite: ${s}`);
     for (const n of result.notes) console.log(`note ${n}`);
     const s = result.summary;
