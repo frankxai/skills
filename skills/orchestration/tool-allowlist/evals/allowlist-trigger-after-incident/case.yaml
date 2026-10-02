@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: allowlist-trigger-after-incident
+description: "Should trigger tool-allowlist."
+tags: [trigger, should-trigger]
+runs: 1
+execution:
+  prompt: "our coding agent ran rm -rf on a folder it was never meant to touch. how do I set up default-deny tool access so it only gets the tools each task needs?"
+  max_turns: 6
+  allowed_tools: [Skill, Read]
+graders:
+  - name: skill-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?tool-allowlist"'
