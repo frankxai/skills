@@ -1,243 +1,97 @@
 ---
 name: mcp-least-privilege
-description: Use when designing or auditing an MCP server's security posture. MCP servers must operate under least-privilege per tool — scoped, narrow credentials and permissions, not omnibus access. Stop if a server is connected "because we might need it" or a tool has broader permissions than its stated function requires.
+description: Use when building, auditing, or reviewing the authorization of an MCP server - "is my MCP server's OAuth set up right", "probe my remote MCP endpoint", "what scopes should my MCP server advertise", "protected resource metadata", "WWW-Authenticate for MCP", "can my MCP server pass the user's token to an upstream API", "should I cache MCP auth checks", or scoping an MCP server's tools and credentials before production. Do NOT use for deciding which tools an agent may call (use tool-allowlist), for building an OAuth authorization server, or for general MCP server design with no security question (use mcp-architecture).
+version: 2.0.0
+argument-hint: "[url of the MCP endpoint to probe]"
 ---
 
-# MCP Least Privilege
+# MCP least privilege
 
-An MCP server is not ready for production until it operates under **least privilege per tool**: each tool gets exactly the access its function requires, and no server is connected "because we might need it." If a server has omnibus permissions or is connected without a defined use case, **stop and scope it down**.
+An MCP server is a privilege boundary: each tool gets only the access its function needs, each token is checked as issued for this server, and nothing is connected "because we might need it". This skill is the server owner's side; which tools an agent may call at all is `tool-allowlist`.
 
-MCP servers are the privilege boundary. The agent on the other side is a credentialed principal at machine speed.
+Quoted text is the MCP authorization spec, revision 2026-07-28, keywords as written. Unquoted guidance is engineering practice.
 
-## When to run
+## Probe a server first
 
-- Designing a new MCP server
-- Auditing an existing MCP server before production rollout
-- Investigating a security incident involving an MCP server
-- Setting up multi-server orchestration
-
-If you cannot name the specific permissions each tool requires, the server is not scoped.
-
-## The MCP security model
-
-**MCP itself does not enforce security** — it delegates all responsibility to implementers. The current standard for remote HTTP-based MCP servers is **OAuth 2.1 with PKCE**.
-
-**Sources:**
-- [Microsoft: State of MCP Security 2026](https://techcommunity.microsoft.com/blog/microsoft-security-blog/the-state-of-mcp-security-in-2026/4531327)
-- [MCP Specification 2026-07-28](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/index.mdx)
-
-### Key threats
-
-1. **Confused deputy** — an MCP server acts with its own broad privileges on behalf of a user who does not have them
-2. **Omnibus tools** — tools that accept free-form input and dispatch at runtime (e.g., `execute`, `run`) collapse all privilege boundaries
-3. **Unscoped access** — a server requests filesystem write, database access, and network access when it only needs read-only file access
-4. **No audit trail** — tool calls happen but no log exists to show who called what
-
-**Sources:**
-- [CODERCOPS: MCP Server Security Checklist](https://blog.codercops.com/blog/mcp-server-security-checklist-2026)
-
-## How to implement least privilege
-
-### 1. Define tool-level granularity
-
-Every tool should be **narrow and explicit**, not a dispatch function.
-
-**Bad: Omnibus tool**
-```typescript
-server.addTool("execute", async (params) => {
-  // accepts arbitrary commands
-  exec(params.command);
-});
-```
-
-This is a privilege boundary collapse. One tool can now do anything the server can do.
-
-**Good: Narrow tools**
-```typescript
-server.addTool("git.status", async () => {
-  return exec("git status");
-});
-
-server.addTool("git.diff", async (params) => {
-  const { file } = params;
-  return exec(`git diff ${shellEscape(file)}`);
-});
-```
-
-Each tool has a single, audited function.
-
-**Sources:**
-- [DigitalApplied: MCP Tool Scoping](https://www.digitalapplied.com/blog/mcp-server-security-best-practices-2026-engineering-guide)
-
-### 2. Enforce per-request authorization
-
-Validate a caller's scopes **at the moment of tool dispatch**, not just at initial authentication.
-
-```typescript
-server.addTool("issues.delete", async (params, context) => {
-  // Re-check scopes on every call
-  if (!context.scopes.includes("mcp:issues:delete")) {
-    throw new Error("Forbidden: missing mcp:issues:delete scope");
-  }
-
-  return await deleteIssue(params.issueId);
-});
-```
-
-Tokens can be revoked mid-session; scope grants can change. Never cache authorization decisions.
-
-**Sources:**
-- [APIScout: MCP Server Security Best Practices](https://apiscout.dev/guides/anthropic-mcp-server-security-2026)
-
-### 3. Define scopes per tool category
-
-Use narrow OAuth scopes, not one all-access scope:
-
-- `mcp:tools:read` — read-only tools
-- `mcp:tools:write` — tools that modify state
-- `mcp:tools:admin` — tools that can modify tool definitions
-
-A weather-lookup tool should **never** have filesystem write access, even if the server also offers file tools. Scopes are per-tool, not per-server.
-
-**Sources:**
-- [APIScout: Scope Design](https://apiscout.dev/guides/anthropic-mcp-server-security-2026)
-
-### 4. Bind identity and context
-
-Pass user identity through the call chain to prevent the confused deputy problem:
-
-```typescript
-server.addTool("repo.delete", async (params, context) => {
-  const { repoId } = params;
-  const userId = context.user.id;
-
-  // Ensure the user has permission, not just the server
-  if (!await userCanDeleteRepo(userId, repoId)) {
-    throw new Error("Forbidden: user lacks repo delete permission");
-  }
-
-  return await deleteRepo(repoId, userId);
-});
-```
-
-The server acts **on behalf of the user**, not with its own omnibus credentials.
-
-**Sources:**
-- [Microsoft: Confused Deputy Risk](https://techcommunity.microsoft.com/blog/microsoft-security-blog/the-state-of-mcp-security-in-2026/4531327)
-
-### 5. Use an identity-aware gateway
-
-Deploy a proxy between the client and MCP servers to:
-- Inspect requests
-- Enforce allowlists (deny tools not on the list)
-- Perform semantic intent verification
-- Log all invocations with agent identity
-
-```
-┌──────────────┐
-│   Agent      │
-└──────┬───────┘
-       │ tool call
-       ▼
-┌────────────────────┐
-│ Identity Gateway   │  ← validates tokens, enforces allowlists
-└──────┬─────────────┘
-       │ allowed
-       ▼
-┌──────────────┐
-│ MCP Server   │
-└──────────────┘
-```
-
-**Sources:**
-- [Microsoft: Identity-Aware Gateway](https://techcommunity.microsoft.com/blog/microsoft-security-blog/the-state-of-mcp-security-in-2026/4531327)
-
-### 6. Sandbox local MCP servers
-
-Local MCP servers run as full OS processes with the user's permissions unless explicitly sandboxed. Use containers, gVisor, or SELinux to isolate them.
-
-**Example: Docker sandbox**
 ```bash
-docker run --rm \
-  --network=none \
-  --read-only \
-  --tmpfs=/tmp:rw,noexec,nosuid \
-  mcp-server-local
+node scripts/probe-mcp-auth.mjs https://mcp.example.com/mcp          # human report
+node scripts/probe-mcp-auth.mjs https://mcp.example.com/mcp --json   # machine report
+node scripts/probe-mcp-auth.mjs http://127.0.0.1:3000/mcp --allow-http
 ```
 
-This limits the blast radius if the server is compromised.
+Zero dependencies, Node 18+. Exit `0` all pass, `1` a check failed, `2` not probeable (connection error, non-HTTP URL, bad arguments). It sends an MCP `initialize` POST with no credentials, the same POST with the dummy bearer token `probe`, the same POST with `?access_token=probe`, and one GET to the `resource_metadata` URL the server names. It refuses URLs that carry userinfo or a credential-like query parameter, never reads the environment, and does not follow redirects.
 
-**Sources:**
-- [APIScout: Sandboxing Local Servers](https://apiscout.dev/guides/anthropic-mcp-server-security-2026)
+| Check | Passes when |
+|---|---|
+| `unauth-401` | the unauthenticated request gets 401 |
+| `challenge-bearer` | the 401 carries a `WWW-Authenticate: Bearer` challenge |
+| `challenge-resource-metadata` | the challenge has a usable `resource_metadata` URL |
+| `challenge-scope` | info only: whether the challenge names `scope` (a SHOULD) |
+| `challenge-no-offline-access` | the challenge scope omits `offline_access` |
+| `metadata-json` | the metadata URL returns 200 and a JSON object |
+| `metadata-resource` | it has an absolute http(s) `resource` |
+| `resource-no-fragment` | `resource` has no `#fragment` |
+| `resource-matches-endpoint` | `resource` equals the probed URL in canonical form, or is its path prefix (the spec lists both an origin and a path as canonical) |
+| `authorization-servers` | `authorization_servers` is a non-empty array of https URLs |
+| `scopes-supported-no-offline-access` | `scopes_supported`, if present, omits `offline_access` |
+| `invalid-bearer-401` | the dummy bearer token gets 401 |
+| `query-token-rejected` | the token in the query string gets 401, never 200 |
 
-### 7. Audit every invocation
+It cannot test, without a real token: token passthrough to upstream APIs, audience validation of a real token issued for another resource, and 403 `insufficient_scope` step-up. Review those in code with `references/server-owner-checklist.md`.
 
-Log every tool call with:
-- Agent identity
-- Tool name
-- Parameters (sanitized — no secrets)
-- Timestamp
-- Policy decision (allow/deny)
+Judgment calls built into the probe: a missing `resource_metadata` fails even though the unread discovery sub-page may describe a well-known fallback; the canonical-URI rule the spec writes for the client's `resource` parameter is applied to the metadata `resource` field; https for authorization servers is the probe's bar, not a separate keyword in the spec. Tests: `node --test` in `scripts/`.
 
-```json
-{
-  "timestamp": "2026-08-16T03:00:00Z",
-  "agent_id": "agent-42",
-  "user_id": "user@example.com",
-  "tool": "repo.delete",
-  "params": { "repoId": "repo-123" },
-  "scopes": ["mcp:tools:admin"],
-  "decision": "allow",
-  "outcome": "success"
-}
-```
+## Scope: when the spec applies
 
-Audit logs let you investigate "how did it call that tool" after the fact.
+- "Authorization is OPTIONAL." A deliberately public server can skip it; the probe then fails `unauth-401` and says so.
+- "When supported: HTTP-based transports SHOULD conform to this spec."
+- "STDIO transports SHOULD NOT follow it and instead retrieve credentials from the environment." Practice: stdio is a transport, not a sandbox. The process still runs with the user's OS permissions, so least privilege for a local server means a narrow credential in its environment and an OS-level sandbox, not OAuth.
 
-**Sources:**
-- [APIScout: Audit Logging](https://apiscout.dev/guides/anthropic-mcp-server-security-2026)
+## Server owner requirements
 
-## Stop conditions — when NOT to proceed
+1. Metadata. "MCP servers MUST implement OAuth 2.0 Protected Resource Metadata (RFC 9728). MCP clients MUST use it for authorization server discovery."
+2. Challenge. "MCP servers SHOULD include a `scope` parameter in the `WWW-Authenticate` header (RFC 6750 section 3) to indicate required scopes." The spec's example: `WWW-Authenticate: Bearer resource_metadata="https://mcp.example.com/.well-known/oauth-protected-resource", scope="files:read"`.
+3. Status codes. "401 authorization required or token invalid; 403 invalid scopes or insufficient permissions; 400 malformed request." And: "Invalid or expired tokens MUST receive HTTP 401."
+4. Audience. "MCP servers MUST validate access tokens per OAuth 2.1 section 5.2 and MUST validate that tokens were issued specifically for them as the intended audience (RFC 8707 section 2)."
+5. No token passthrough. "MCP servers MUST only accept tokens that are valid for use with their own resources." "MCP servers MUST NOT accept or transit any other tokens." Practice: when the server calls an upstream API, it uses its own credential for that API, never the token the client sent.
+6. Canonical resource. Of the RFC 8707 `resource` parameter that names this server, the spec says it "MUST identify the MCP server the token is for; MUST use the canonical URI of the server." Canonical: `https://mcp.example.com/mcp`, `https://mcp.example.com`. Invalid: no scheme, "anything with a fragment". "Prefer no trailing slash."
+7. Minimal scopes. `scopes_supported` is "intended to represent the minimal set of scopes necessary for basic functionality". "Servers SHOULD NOT include `offline_access` in the WWW-Authenticate scope or in `scopes_supported`."
+8. Insufficient scope at runtime. "servers SHOULD respond `403 Forbidden` with `WWW-Authenticate: Bearer error="insufficient_scope", scope="<needed scopes>", resource_metadata="...", error_description="..."`." "Servers SHOULD include all scopes required for the current operation in a single challenge, not one at a time." "Servers MUST account for scope hierarchies (a broader scope implies narrower ones)."
 
-**STOP** if any of the following is true:
+## Client rules, briefly
 
-1. The MCP server has omnibus tools (e.g., `execute`, `run`) that accept free-form input
-2. A tool requests more permissions than its stated function requires
-3. The server is connected "because we might need it" with no defined use case
-4. No scopes are defined (one token grants all access)
-5. Authorization is checked once at authentication, not on every tool call
-6. No audit log exists for tool invocations
-7. Local servers run without sandboxing
+- "The client MUST use the `Authorization: Bearer <access-token>` header on every HTTP request. Access tokens MUST NOT be included in the URI query string."
+- "MCP clients MUST NOT send tokens to the MCP server other than ones issued by the MCP server's authorization server."
+- Clients "MUST generate PKCE parameters, include the `resource` parameter, and record the expected issuer before redirecting", and the resource parameter "MUST be included in both authorization and token requests". "Clients MUST send it regardless of whether authorization servers support it."
+- "Clients MUST treat the challenge scopes as authoritative for the current operation."
+- "Authorization servers and MCP clients SHOULD support OAuth Client ID Metadata Documents." Dynamic Client Registration "is deprecated and retained for backwards compatibility with authorization servers that do not support Client ID Metadata Documents". Details live in the unread client-registration sub-page.
 
-Do not deploy. Scope the server down, then connect it.
+## Should authorization decisions be cached?
 
-## Verification checklist
+- Scope checks: run them at every tool dispatch, against the scopes on the token presented with that request. A session that authenticated once does not carry a permission forward to a later, more powerful call. This is what makes requirement 8 possible.
+- Token validation: caching the result of an introspection call or a fetched signing key for a short TTL is normal practice and not forbidden by the spec text read here. The cache must never outlive the token's own expiry, because "Invalid or expired tokens MUST receive HTTP 401." Keep the TTL short enough that revocation lands within a window you can defend.
 
-Before deploying an MCP server:
+## Least privilege inside the server (practice, not spec text)
 
-- ☐ Every tool is narrow and explicit (no omnibus tools)
-- ☐ Scopes are defined per tool category (read/write/admin)
-- ☐ Authorization is re-validated on every tool call
-- ☐ User identity is passed through the call chain (no confused deputy)
-- ☐ An identity-aware gateway enforces allowlists
-- ☐ Local servers are sandboxed (containers, gVisor, SELinux)
-- ☐ Every tool call is logged with agent identity, tool name, and decision
-- ☐ Audit logs are monitored for policy violations
+- Narrow tools. No `execute` or `run` tool that takes a free-form command; one tool per audited operation. When a tool shells out, pass an argument array to `execFile`, never a string to `exec`. The corrected `git diff` example is in the checklist.
+- One scope per capability tier, checked at the tool, for example `files:read` versus `files:write`. A read-only tool never inherits a write credential because it shares a pool.
+- Bind the user. Authorize the action for the user behind the token, not for the server's own service account, or the server becomes a confused deputy.
+- Sandbox local servers: container or OS sandbox, no network unless a tool needs it, read-only filesystem by default.
+- Audit every call: caller identity, tool, sanitized arguments, scopes, decision, outcome. Never log tokens.
 
-If any checkbox is unchecked, the server is not operating under least privilege. Scope it down, then deploy.
+## Stop conditions
 
-## Common mistakes
+Do not ship the server if any of these hold:
 
-1. **Authentication ≠ Authorization** — a server is authenticated, but that says nothing about what it should be allowed to do
-2. **Broad credentials for convenience** — a weather tool inherits filesystem write access because it shares a credential pool
-3. **No tool-level scopes** — one token grants all tools, not per-tool permissions
-4. **Stdio = security** — stdio is a transport choice, not a security control; the agent is still a credentialed principal
-5. **No audit trail** — you cannot investigate incidents without logs
+1. The probe exits 1 on an endpoint that is meant to require authorization.
+2. A tool accepts a free-form command or builds a shell string from input.
+3. The server forwards the client's token upstream or accepts a token issued for another resource.
+4. One scope grants every tool, or `scopes_supported` lists more than basic functionality needs.
+5. Scope is checked once per session instead of per call.
+6. No audit log exists for tool calls.
 
-**Sources:**
-- [CODERCOPS: Common MCP Security Mistakes](https://blog.codercops.com/blog/mcp-server-security-checklist-2026)
-- [DigitalApplied: MCP Privilege Boundary](https://www.digitalapplied.com/blog/mcp-server-security-best-practices-2026-engineering-guide)
+## Sources and limits
 
----
+Verified against modelcontextprotocol.io/specification/2026-07-28/basic/authorization on 2026-10-02.
 
-*MCP servers are the privilege boundary. Treat them with the same operational seriousness as a public-facing API with the blast radius of the tools they expose.*
+The spec names three normative sub-pages that were not read for this skill, so it claims nothing about their content: authorization-server-discovery, client-registration, and security-considerations. The spec says implementations MUST follow the Security Considerations page (token theft, mix-up and confused deputy attacks, open redirection, and more). Read all three before relying on this skill or the probe for a security review.
