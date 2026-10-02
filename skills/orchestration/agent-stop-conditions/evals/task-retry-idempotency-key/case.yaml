@@ -1,0 +1,21 @@
+schema_version: "1.1"
+name: task-retry-idempotency-key
+description: Outcome case. The answer must refuse blind retries of a payment write and require an idempotency key.
+tags: [task]
+expected_outcome: Says the createCharge write must not be retried without an idempotency key reused across attempts, because a timed-out charge may already have landed.
+runs: 1
+execution:
+  prompt: "My agent wraps every tool call in 3 retries, including the createCharge tool that bills the customer. Any problem with that? Short answer."
+  max_turns: 6
+  allowed_tools: [Skill, Read]
+graders:
+  - name: requires-idempotency-key
+    type: regex
+    target: last_message
+    pattern: 'idempoten(cy|t)[ -]key'
+    flags: i
+    weight: 2
+  - name: skill-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?agent-stop-conditions"'
