@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: lp-trigger-probe-endpoint
+description: "Should trigger mcp-least-privilege."
+tags: [trigger, should-trigger]
+runs: 1
+execution:
+  prompt: "I just deployed a remote MCP server at https://mcp.acme.dev/mcp with OAuth. How do I check it actually follows the MCP auth spec?"
+  max_turns: 6
+  allowed_tools: [Skill, Read]
+graders:
+  - name: skill-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?mcp-least-privilege"'

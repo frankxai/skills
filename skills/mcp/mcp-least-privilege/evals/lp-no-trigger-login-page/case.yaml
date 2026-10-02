@@ -1,0 +1,16 @@
+schema_version: "1.1"
+name: lp-no-trigger-login-page
+description: "Should NOT trigger mcp-least-privilege. (web app OAuth login, no MCP)"
+tags: [trigger, should-not-trigger]
+runs: 1
+execution:
+  prompt: "add a 'sign in with Google' button to my Next.js app using OAuth"
+  max_turns: 4
+  allowed_tools: [Skill, Read]
+graders:
+  - name: skill-not-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?mcp-least-privilege"'
+    min: 0
+    max: 0
