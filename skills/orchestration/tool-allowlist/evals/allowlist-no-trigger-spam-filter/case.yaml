@@ -1,0 +1,16 @@
+schema_version: "1.1"
+name: allowlist-no-trigger-spam-filter
+description: "Should NOT trigger tool-allowlist. (allowlist in an unrelated domain)"
+tags: [trigger, should-not-trigger]
+runs: 1
+execution:
+  prompt: "should my email server use an allowlist or a blocklist for incoming senders?"
+  max_turns: 4
+  allowed_tools: [Skill, Read]
+graders:
+  - name: skill-not-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?tool-allowlist"'
+    min: 0
+    max: 0

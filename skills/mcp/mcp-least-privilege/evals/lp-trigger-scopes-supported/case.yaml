@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: lp-trigger-scopes-supported
+description: "Should trigger mcp-least-privilege."
+tags: [trigger, should-trigger]
+runs: 1
+execution:
+  prompt: "what should go in scopes_supported in my MCP server's protected resource metadata? should I add offline_access so clients get refresh tokens?"
+  max_turns: 6
+  allowed_tools: [Skill, Read]
+graders:
+  - name: skill-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?mcp-least-privilege"'

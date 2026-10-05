@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: allowlist-trigger-review-bash-allow
+description: "Should trigger tool-allowlist."
+tags: [trigger, should-trigger]
+runs: 1
+execution:
+  prompt: "my .claude/settings.json has \"allow\": [\"Bash\", \"Read\", \"WebFetch\"]. is that a problem for an agent that only reviews pull requests?"
+  max_turns: 6
+  allowed_tools: [Skill, Read]
+graders:
+  - name: skill-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?tool-allowlist"'

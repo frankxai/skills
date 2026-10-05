@@ -1,0 +1,23 @@
+schema_version: "1.1"
+name: lp-task-git-diff-execfile
+description: Outcome case. Asked to review a shelling-out MCP tool, the answer replaces the exec string with execFile and an argument array.
+tags: [task]
+expected_outcome: Recommends execFile (or spawn) with an argument array and a -- separator instead of exec with an escaped string.
+runs: 1
+execution:
+  prompt: "Review this tool in my MCP server for security: server.addTool('git.diff', async ({ file }) => exec(`git diff ${shellEscape(file)}`)). Show the fixed code."
+  max_turns: 8
+  allowed_tools: [Skill, Read]
+graders:
+  - name: uses-execfile
+    type: regex
+    target: last_message
+    pattern: '\b(execFile|spawn)\s*\('
+  - name: argument-array
+    type: regex
+    target: last_message
+    pattern: '\[\s*[''"]diff[''"]'
+  - name: skill-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?mcp-least-privilege"'

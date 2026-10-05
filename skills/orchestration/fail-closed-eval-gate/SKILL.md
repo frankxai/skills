@@ -1,146 +1,112 @@
 ---
 name: fail-closed-eval-gate
-description: Use when an agent, system, or prompt change is ready to merge or deploy. Do not proceed unless a named evaluation suite exists that can fail and block the release. Triggers include "ready to merge", "ship this change", "deploy to production", "CI/CD for agents", "gate this release".
+version: 2.0.0
+description: "Use when a Claude Code plugin or skill change is about to merge or release and CI must block it unless the plugin measurably beats the no-plugin baseline. Fires on: 'gate this release on evals', 'fail CI if the plugin regresses', 'claude plugin eval passed but the delta is negative', 'can I trust this results.json', 'the eval run was partial, can we ship', 'set up claude plugin eval in GitHub Actions', 'my eval gate always passes'. Also use when reviewing an existing agent eval gate that cannot fail. Do not use for ordinary unit-test or lint CI, for skill-creator evals.json or promptfoo suites (claude plugin eval reads neither), or for grading one conversation by hand."
 ---
 
-# Fail-Closed Eval Gate
+# Fail-closed eval gate
 
-A change to an agent or prompt is not shippable until an evaluation suite exists that can **fail and block the release**. If no eval artifact is present, or if the eval cannot fail, **stop and build the gate first**.
+Cost: every `claude plugin eval` run and every judge grader is a real model call billed to your plan
+or API key (`ANTHROPIC_API_KEY` in CI). Requires Claude Code v2.1.269 or later. The gate script
+itself is free, offline, zero-dependency Node 18+.
 
-This is the CI equivalent for AI agents: the check that sits between code-complete and production.
+## The gap this closes
 
-## When to run
+`claude plugin eval` exits 0 when every case's with-plugin score meets `--threshold`. It also
+measures the with-minus-without delta, and the docs say: "The with-minus-without delta is reported
+but never changes the exit code". A plugin that scores 1.0 where the bare model also scores 1.0
+passes while adding nothing; one that makes answers worse than no plugin passes too, if its
+absolute score clears the threshold.
 
-- A pull request changes agent prompts, system instructions, tool schemas, or orchestration logic
-- Someone says "ready to merge" or "ship this"
-- A release candidate is proposed
-- You're setting up CI/CD for the first time
+`scripts/delta-gate.mjs` reads the run's JSON result and fails unless the plugin beat the baseline,
+the run finished, and every number it judged is comparable.
 
-If you can't name the eval suite and show its last failing run, the change is not gated.
+## Procedure
 
-## The gate structure
+1. Write cases in the plugin's `evals/` directory: one directory per case with `prompt.md` and
+   `graders/*.md`. Score the outcome (a `regex` over the reply or a produced file, an `llm` rubric
+   with concrete PASS and FAIL conditions). Add `tool_used` with `tool: Skill` as the
+   "did my skill fire" indicator; in a two-arm run it is reported but excluded from the score, so
+   it cannot inflate the delta. See `evals/` in this skill for working examples.
+2. Tag cases that should improve on the baseline (`tags: [delta]`) apart from no-trigger cases
+   (`tags: [no-trigger]`). A no-trigger case scores the same with and without the plugin by design,
+   so its delta is 0 and it belongs in a separate `--ablation none` run judged by exit code alone.
+3. Run the delta cases two-armed and write the result:
+   `claude plugin eval . --trust-plugin --json results.json --ablation with-without --threshold 0.8 --model <pinned> --judge-model <pinned> --no-publish --max-cost-usd 20 --tag delta`
+   (target first; `--json` takes an optional path, and `--tag` takes a list, so keep it last).
+4. Gate on the result: `node scripts/delta-gate.mjs results.json --min-delta 0 --min-score 0.8`.
+5. Prove the gate can fail before trusting it: hand-edit one case's `delta` in a copy of
+   `results.json` to `0` and confirm exit 1 names that case. An eval that has never gone red is not
+   a gate. `node --test scripts/delta-gate.test.mjs` does this for the script itself.
+6. Wire both steps into CI. `references/ci.md` has a complete GitHub Actions job.
 
-Agent evaluation gates are tiered. Each tier blocks independently — a strong score on one tier does not carry a weak score on another.
+## Exit codes
 
-### Tier 1: Deterministic (runs on every PR)
+`claude plugin eval` (from the docs):
 
-Fast, non-LLM checks that validate tool-call correctness:
+| Exit | Meaning |
+| :- | :- |
+| 0 | Every case at or above `--threshold`, every case file loaded |
+| 1 | A case below threshold, a case file failed to load, no cases found, a run could not start, directory not trusted without `--trust-plugin`, or an invalid option |
+| 2 | Partial run: `--max-cost-usd` ceiling hit, or the credential was rejected. `results.json` is still written with `partial: true` |
+| 130 / 143 | Interrupted / terminated (for example a CI timeout) |
 
-1. **Tool schema validation** — every tool call uses a valid schema with required fields present
-2. **Argument validity** — tool arguments parse correctly and meet type constraints
-3. **Sequence correctness** — tool calls follow valid state transitions (e.g., no "close issue" before "open issue")
+`delta-gate.mjs`:
 
-**How to implement:**
-- Record actual tool calls as replay cassettes (golden runs)
-- On each PR, replay the cassettes and assert that tool arguments still match expected schemas
-- Use libraries like `@agent-eval/replay` or write assertions against recorded JSON
+| Exit | Meaning |
+| :- | :- |
+| 0 | Valid `schemaVersion: 1`, not partial, every case has a comparable delta, no run skipped its judge graders or ended abnormally, the required share of cases has delta above 0, `aggregates.meanDelta` above `--min-delta`, `aggregates.overallScore` at or above `--min-score`, and `casesPassed` equals `casesTotal` |
+| 1 | The measurement is valid and missed the bar. Each failure line names the case, its delta and its score |
+| 2 | The input cannot be trusted: missing file, malformed JSON, wrong `schemaVersion`, `partial: true`, no cases, missing counts or case scores, malformed arm runs, or a bad option |
 
-**Sources:**
-- [Agent Evaluation Harness: Replay + CI Gates](https://www.kunalganglani.com/blog/agent-evaluation-harness-replay)
-- [Pondero CI for agents guide](https://pondero.ai/enterprise/guides/ci-for-agents-eval-gating-2026/)
+What the gate treats as failure, and why:
 
-### Tier 2: Behavioral (runs on merge to main or nightly)
+- A missing `delta` (one-arm run, or arms not comparable) fails.
+- `skippedPaidGraders: true` on any run fails: the docs say that run's score "isn't comparable".
+- A non-null `error` on any run fails, in either arm. Rate-limit errors do not mark a suite partial;
+  the run is graded on what it produced and usually scores 0, so an errored baseline run inflates
+  the delta.
+- An `aborted` run (a mock's `expect:` was violated) fails.
+- Unknown fields are ignored, as the docs require of consumers.
 
-LLM-as-judge for semantic correctness:
+## Thresholds are defaults to tune
 
-1. **Faithfulness** — agent cites only information it retrieved; no hallucinations
-2. **Instruction adherence** — agent follows the task spec, does not invent steps
-3. **Safety** — agent does not execute unsafe actions or leak PII
+None of these is a rule. Set them from your own score history and record why.
 
-**How to implement:**
-- Define explicit rubrics per dimension (not "quality" — name the exact condition)
-- Use LLM-judge with `repeat: 3` and `repeat-min-pass: 2` (majority voting to reduce judge flakiness)
-- Set per-dimension thresholds: **a single safety failure blocks the build**, even if other metrics pass
+| Flag | Default | Where it comes from |
+| :- | :- | :- |
+| `--min-delta` | `0` | The weakest claim worth gating: on average the plugin beats no plugin |
+| `--min-score` | `0.8` | Matches the `--threshold 0.8` in the docs' CI example; their own default threshold is 1.0 |
+| `--min-positive-share` | `1.0` | Strict start: every delta case must beat baseline. Lower it (for example `0.8`) once you know which cases are noisy; flat cases are still printed as notes |
 
-**Example rubric (faithfulness):**
-```yaml
-rubric: "The agent cites the tracking number and gives no delivery date it did not look up. Score PASS if true, FAIL otherwise."
-```
+Three runs per case is the docs' default. Raise `--runs` before you tighten `--min-delta`: a delta
+measured on three runs is noisy, and tightening a noisy bar trains people to rerun until green.
 
-**Sources:**
-- [Noveum: AI Agent Evaluation Gate](https://noveum.ai/en/blog/ai-agent-evaluation-gate)
-- [FutureAGI: Definitive Guide to Agent Evaluation](https://futureagi.substack.com/p/the-definitive-guide-to-ai-agent)
+## Grade outcomes, not paths
 
-### Tier 3: Regression (runs nightly or on release)
+Score what the plugin produced: the reply, a file, a command's recorded result. `tool_order` and
+`tool_used` checks on intermediate steps break whenever the model finds a different valid route,
+and they reward the route instead of the result. The one path check worth keeping is
+`tool_used: Skill`, as an indicator of whether the skill fired, which the eval tool already
+excludes from the score in two-arm runs.
 
-Large-scale suites with incident-derived cases:
+## Do not
 
-1. **Incident-to-test loop** — every production failure becomes a test case
-2. **Edge cases** — the long tail of unusual inputs
-3. **Cost and step budget** — median token cost and step count must not exceed baseline by more than 15 percent
+- Do not test `$?` in a later CI step. Each step runs in its own shell, and a step that exits
+  non-zero already fails the job.
+- Do not chart or approve from a `partial: true` document or a run with `skippedPaidGraders`.
+- Do not leave `--model` unpinned in CI; a model rollout then looks like a plugin regression.
+- Do not let a red gate be overridden by an approving comment. Make the gate job a required check.
+- Do not let the spec change without the cases. Whoever owns the skill owns its evals, and every
+  production failure becomes a case.
 
-**How to implement:**
-- Maintain a baseline: advance it only when completion rate improves by at least 1 point or cost drops by at least 10 percent
-- Never auto-advance on every green run (slow-cooking regressions)
-- Record and version your baseline artifact
+## Provenance
 
-**Sources:**
-- [RockB: Agent CI/CD Eval Pipeline](https://baeseokjae.github.io/posts/agent-ci-cd-eval-pipeline-integration-guide-2026/)
+Verified against code.claude.com/docs/en/plugin-evals on 2026-10-02: command flags, exit codes,
+JSON result fields, case layout, grader types, and the two-arm scoring exclusions.
 
-## Stop conditions — when NOT to proceed
-
-**STOP** if any of the following is true:
-
-1. No eval suite exists for this agent or flow
-2. The eval suite cannot fail (it's always green, or it only logs)
-3. The eval suite has no tier-1 deterministic checks
-4. The eval has no per-dimension thresholds (only one aggregate "pass rate")
-5. The most recent run of the eval suite has no failure artifact (you can't show a red run)
-
-Do not merge. Do not deploy. Build the gate first.
-
-## The gate in CI
-
-Wire the gate into the same CI job that runs your unit tests:
-
-```yaml
-# Example GitHub Actions
-- name: Run Tier 1 Eval (Deterministic)
-  run: |
-    npm run eval:replay -- --suite=tier1 --threshold=100
-    # Must pass 100% of deterministic checks
-
-- name: Run Tier 2 Eval (Behavioral)
-  run: |
-    npm run eval:behavioral -- --suite=tier2
-    # Per-dimension thresholds set in config
-    # Blocks on any dimension below threshold
-
-- name: Gate Decision
-  run: |
-    # Fail the job if any tier failed
-    if [ $? -ne 0 ]; then
-      echo "Eval gate failed. See logs for dimension breakdown."
-      exit 1
-    fi
-```
-
-The job must fail when the gate fails. A red PR comment is not enough.
-
-## Common mistakes
-
-1. **Averaging dimensions** — "overall score 85%" hides a 50% safety score. Use per-dimension thresholds.
-2. **No replay** — running live tool calls in CI makes tests flaky. Record and replay.
-3. **Stale evals** — the spec changed but the eval didn't. Eval ownership = spec ownership.
-4. **Gate bypass culture** — developers override red gates with "LGTM" comments. The gate must block merges, not just post warnings.
-
-**Sources:**
-- [Pondero: Common CI pitfalls](https://pondero.ai/enterprise/guides/ci-for-agents-eval-gating-2026/)
-
-## Verification checklist
-
-Before you mark a change "ready to ship":
-
-- ☐ A named eval suite exists (`tier1-replay`, `tier2-behavioral`, `tier3-regression`)
-- ☐ The suite has run in the last 24 hours
-- ☐ The suite has at least one recorded failure (proof it can fail)
-- ☐ Per-dimension thresholds are set (safety, faithfulness, instruction adherence)
-- ☐ Deterministic replay is enabled for tier-1 checks
-- ☐ The gate is wired into CI and blocks merges on failure
-- ☐ Incident cases from production are promoted into the regression suite
-
-If any checkbox is unchecked, the change is not gated. Build the gate, then ship.
-
----
-
-*An eval that cannot fail is observability, not a gate. Treat agent changes like code: no merge without tests, no deploy without CI.*
+Re-verify the JSON field names and exit codes whenever `claude --version` changes minor version,
+or `schemaVersion` in a result stops being `1`. The gate refuses any other `schemaVersion` with
+exit 2. The test fixtures are hand-built from
+the documented schema, not captured from a real run; capture one real `results.json` and add it
+as a fixture when you first run the suite.

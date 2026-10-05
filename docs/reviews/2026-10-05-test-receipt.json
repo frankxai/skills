@@ -1,0 +1,373 @@
+{
+  "reviewedAt": "2026-10-05T15:43:33.222654+00:00",
+  "repo": "frankxai/skills",
+  "baseHead": "bd80004713be6451188ac4ab66c1a9f55fa516ae",
+  "baseTree": "fe4eb1a024b0fd3593a64e1d1632a7e9ce5d595e",
+  "testedIntegrationHead": "051f512f53d3b8a53a93a6f79d25a19b3b4955a7",
+  "testedIntegrationTree": "df130c065f6cec11fc4fe5164fa12714f2dc747e",
+  "node": "v24.19.0",
+  "branches": [
+    {
+      "branch": "agent/claude/allowlist",
+      "head": "c63d27a30fd959e34cff8cc5a87413e122a85dc9",
+      "tree": "a02e6803939d533348310fa1bce627ec67a12f49",
+      "ahead": 1,
+      "behind": 0,
+      "treeEqualsMain": false,
+      "patchEquivalence": [
+        "+ c63d27a30fd959e34cff8cc5a87413e122a85dc9"
+      ]
+    },
+    {
+      "branch": "agent/claude/canonical-frontmatter",
+      "head": "cb07af98b85cfa159cbe82468b3582258cf82f60",
+      "tree": "a55fd912cb8ec9967591eeab6d0e7660c6c3dd11",
+      "ahead": 2,
+      "behind": 2,
+      "treeEqualsMain": false,
+      "patchEquivalence": [
+        "+ ec053a58aaa9552008154b07b5c64b21f8368cb2",
+        "+ cb07af98b85cfa159cbe82468b3582258cf82f60"
+      ]
+    },
+    {
+      "branch": "agent/claude/dollar-digit-gate",
+      "head": "9f000cf5c0c2e0e22af4b651111e9fe797906373",
+      "tree": "0da3b5bd7de0d70930d229a5730c0af50fdc0b1f",
+      "ahead": 3,
+      "behind": 2,
+      "treeEqualsMain": false,
+      "patchEquivalence": [
+        "+ 1ccd0ee4de2167f8732202499d072cc07a171af5",
+        "+ 15678fad56ccef45ed8d5816944ab79c018e7454",
+        "+ 9f000cf5c0c2e0e22af4b651111e9fe797906373"
+      ]
+    },
+    {
+      "branch": "agent/claude/eval-gate",
+      "head": "d8a5d5b5a4e69331e5601be8bdfe793a51a4178e",
+      "tree": "f67dc008815fc2de2819f9c47127aa021ba974ae",
+      "ahead": 2,
+      "behind": 0,
+      "treeEqualsMain": false,
+      "patchEquivalence": [
+        "+ c9af0770303d59a14598bfdc5656bf92b5ab5c3d",
+        "+ d8a5d5b5a4e69331e5601be8bdfe793a51a4178e"
+      ]
+    },
+    {
+      "branch": "agent/claude/mcp-auth",
+      "head": "fc54e39447966f454564f7ee624cfefc55f6b6a1",
+      "tree": "e77abd1967763850221bbc8af859e3dd764e5c19",
+      "ahead": 1,
+      "behind": 0,
+      "treeEqualsMain": false,
+      "patchEquivalence": [
+        "+ fc54e39447966f454564f7ee624cfefc55f6b6a1"
+      ]
+    },
+    {
+      "branch": "agent/claude/stop-conditions",
+      "head": "9e6d8af7e032ca4d9fd3ce42fb753175a7c8a0be",
+      "tree": "6e6b8ae11e9aeffb0b2556a17c2525cb9bd14652",
+      "ahead": 1,
+      "behind": 0,
+      "treeEqualsMain": false,
+      "patchEquivalence": [
+        "+ 9e6d8af7e032ca4d9fd3ce42fb753175a7c8a0be"
+      ]
+    },
+    {
+      "branch": "cursor/agent-quality-gates-9a34",
+      "head": "ed8c4c7762c9290468d9a4eaa2a84f0d79df68ed",
+      "tree": "80a7d23ead187f2cf9cb922af2e5b6943e787375",
+      "ahead": 1,
+      "behind": 2,
+      "treeEqualsMain": false,
+      "patchEquivalence": [
+        "+ ed8c4c7762c9290468d9a4eaa2a84f0d79df68ed"
+      ]
+    },
+    {
+      "branch": "cursor/quality-gates-skills-9a34",
+      "head": "5245df333655cf655679800a3bf3e016da2d74a4",
+      "tree": "275bfb3475ff3efbcc8d87c13dc44266c3488382",
+      "ahead": 1,
+      "behind": 2,
+      "treeEqualsMain": false,
+      "patchEquivalence": [
+        "- 5245df333655cf655679800a3bf3e016da2d74a4"
+      ]
+    }
+  ],
+  "openPRs": [
+    {
+      "number": 7,
+      "head": "agent/claude/dollar-digit-gate",
+      "draft": true
+    },
+    {
+      "number": 9,
+      "head": "agent/claude/eval-gate",
+      "draft": false
+    },
+    {
+      "number": 10,
+      "head": "agent/claude/allowlist",
+      "draft": true
+    },
+    {
+      "number": 11,
+      "head": "agent/claude/mcp-auth",
+      "draft": true
+    },
+    {
+      "number": 12,
+      "head": "agent/claude/stop-conditions",
+      "draft": true
+    }
+  ],
+  "tests": {
+    "originalHeadPasses": {
+      "allowlist": 37,
+      "eval-gate": 23,
+      "mcp-auth": 17,
+      "stop-conditions": 39
+    },
+    "integrationPasses": 128,
+    "integrationFailures": 0,
+    "adversarialFailureCountsBeforeFix": {
+      "general": 7,
+      "mcp": 4,
+      "credentialFamilies": 2
+    }
+  },
+  "logs": [
+    {
+      "name": "adversarial-red.log",
+      "sha256": "ecb73d977d388b4a0abf8c8c26bd23f2c1b3c57755b53b5c45dc5326e6abeaf2",
+      "summary": [
+        "      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {",
+        "    generatedMessage: true,",
+        "    code: 'ERR_ASSERTION',",
+        "    actual: [ { code: 'blocklist', where: '$.allow', message: 'deny rules with no allow rules is a blocklist: it says what is forbidden, not what the task needs', fix: 'add the allow rules the task needs; keep the deny rules as a backstop' } ],",
+        "    expected: [],",
+        "    operator: 'deepStrictEqual',",
+        "    diff: 'simple'",
+        "  }"
+      ]
+    },
+    {
+      "name": "credential-families-red.log",
+      "sha256": "275f62c616f5118cbe85af69cef1f447ba982217374a144a043fde0d95ece149",
+      "summary": [
+        "      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {",
+        "    generatedMessage: true,",
+        "    code: 'ERR_ASSERTION',",
+        "    actual: false,",
+        "    expected: true,",
+        "    operator: '==',",
+        "    diff: 'simple'",
+        "  }"
+      ]
+    },
+    {
+      "name": "integration-green.log",
+      "sha256": "903e6f9484f201fbb56ae5af42cb7f57a96e1a4d4a869c0a209c16f6178e1ffc",
+      "summary": [
+        "\u2139 tests 128",
+        "\u2139 suites 0",
+        "\u2139 pass 128",
+        "\u2139 fail 0",
+        "\u2139 cancelled 0",
+        "\u2139 skipped 0",
+        "\u2139 todo 0",
+        "\u2139 duration_ms 8072.110003"
+      ]
+    },
+    {
+      "name": "integration-validator.log",
+      "sha256": "35122d2b05b31d09392fdf63b0bdd807d120e2f7994dd37cc0cb5144b373ea04",
+      "summary": [
+        "all skills valid"
+      ]
+    },
+    {
+      "name": "mcp-adversarial-red.log",
+      "sha256": "c773c49dd0607675350534ecc2049aba3308349c1035aa11804604fd4677b417",
+      "summary": [
+        "      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {",
+        "    generatedMessage: false,",
+        "    code: 'ERR_ASSERTION',",
+        "    actual: 1,",
+        "    expected: 0,",
+        "    operator: 'strictEqual',",
+        "    diff: 'simple'",
+        "  }"
+      ]
+    },
+    {
+      "name": "skills-review-allowlist-tests.log",
+      "sha256": "327595c00a6ab353da823714f7179db868769d008894e572d900808d1fe042ab",
+      "summary": [
+        "\u2139 tests 37",
+        "\u2139 suites 0",
+        "\u2139 pass 37",
+        "\u2139 fail 0",
+        "\u2139 cancelled 0",
+        "\u2139 skipped 0",
+        "\u2139 todo 0",
+        "\u2139 duration_ms 4659.714742"
+      ]
+    },
+    {
+      "name": "skills-review-allowlist-validator.log",
+      "sha256": "35122d2b05b31d09392fdf63b0bdd807d120e2f7994dd37cc0cb5144b373ea04",
+      "summary": [
+        "all skills valid"
+      ]
+    },
+    {
+      "name": "skills-review-canonical-frontmatter-validator.log",
+      "sha256": "35122d2b05b31d09392fdf63b0bdd807d120e2f7994dd37cc0cb5144b373ea04",
+      "summary": [
+        "all skills valid"
+      ]
+    },
+    {
+      "name": "skills-review-cursor-agent-quality-gates-9a34-validator.log",
+      "sha256": "35122d2b05b31d09392fdf63b0bdd807d120e2f7994dd37cc0cb5144b373ea04",
+      "summary": [
+        "all skills valid"
+      ]
+    },
+    {
+      "name": "skills-review-cursor-quality-gates-skills-9a34-validator.log",
+      "sha256": "35122d2b05b31d09392fdf63b0bdd807d120e2f7994dd37cc0cb5144b373ea04",
+      "summary": [
+        "all skills valid"
+      ]
+    },
+    {
+      "name": "skills-review-dollar-digit-gate-validator.log",
+      "sha256": "35122d2b05b31d09392fdf63b0bdd807d120e2f7994dd37cc0cb5144b373ea04",
+      "summary": [
+        "all skills valid"
+      ]
+    },
+    {
+      "name": "skills-review-eval-gate-tests.log",
+      "sha256": "b8b35e1260e7061d0f8b9978bff3b952601f60821bebbbb0febb6ff9b4e3f38c",
+      "summary": [
+        "\u2139 tests 23",
+        "\u2139 suites 0",
+        "\u2139 pass 23",
+        "\u2139 fail 0",
+        "\u2139 cancelled 0",
+        "\u2139 skipped 0",
+        "\u2139 todo 0",
+        "\u2139 duration_ms 2615.34576"
+      ]
+    },
+    {
+      "name": "skills-review-eval-gate-validator.log",
+      "sha256": "35122d2b05b31d09392fdf63b0bdd807d120e2f7994dd37cc0cb5144b373ea04",
+      "summary": [
+        "all skills valid"
+      ]
+    },
+    {
+      "name": "skills-review-mcp-auth-tests.log",
+      "sha256": "41686c778f450a831194d0e977d0560a6808c54f48fdbf862bc8f8b828eeae90",
+      "summary": [
+        "\u2139 tests 17",
+        "\u2139 suites 0",
+        "\u2139 pass 17",
+        "\u2139 fail 0",
+        "\u2139 cancelled 0",
+        "\u2139 skipped 0",
+        "\u2139 todo 0",
+        "\u2139 duration_ms 3862.638141"
+      ]
+    },
+    {
+      "name": "skills-review-mcp-auth-validator.log",
+      "sha256": "35122d2b05b31d09392fdf63b0bdd807d120e2f7994dd37cc0cb5144b373ea04",
+      "summary": [
+        "all skills valid"
+      ]
+    },
+    {
+      "name": "skills-review-stop-conditions-tests.log",
+      "sha256": "bd2192c050e60fdfa2b28f8da7b26955dca6333a8ac2794b0ccee7314410b915",
+      "summary": [
+        "\u2139 tests 39",
+        "\u2139 suites 0",
+        "\u2139 pass 39",
+        "\u2139 fail 0",
+        "\u2139 cancelled 0",
+        "\u2139 skipped 0",
+        "\u2139 todo 0",
+        "\u2139 duration_ms 3542.729798"
+      ]
+    },
+    {
+      "name": "skills-review-stop-conditions-validator.log",
+      "sha256": "35122d2b05b31d09392fdf63b0bdd807d120e2f7994dd37cc0cb5144b373ea04",
+      "summary": [
+        "all skills valid"
+      ]
+    }
+  ],
+  "forwardValidation": [
+    {
+      "check": "review-policy",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "{\n  \"file\": \"review.policy.json\",\n  \"ok\": true,\n  \"errors\": [],\n  \"warnings\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "check": "paused-policy",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "{\n  \"file\": \"paused.policy.json\",\n  \"ok\": true,\n  \"errors\": [],\n  \"warnings\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "check": "review-converter",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "{\n  \"permissions\": {\n    \"defaultMode\": \"dontAsk\",\n    \"allow\": [\n      \"Read(src/**)\",\n      \"Edit(src/**)\",\n      \"WebFetch(domain:docs.github.com)\",\n      \"mcp__github__get_pull_request\",\n      \"Bash(npm test)\"\n    ],\n    \"ask\": [],\n    \"deny\": [\n      \"Read(.env)\",\n      \"Read(.env.*)\",\n      \"Read(~/.ssh/**)\",\n      \"Read(*.pem)\",\n      \"Edit(.env)\",\n      \"Edit(.env.*)\",\n      \"Edit(~/.ssh/**)\",\n      \"Edit(*.pem)\"\n    ]\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "check": "paused-converter",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "{\n  \"permissions\": {\n    \"defaultMode\": \"dontAsk\",\n    \"allow\": [],\n    \"ask\": [],\n    \"deny\": [\n      \"Read\",\n      \"Edit\",\n      \"Bash\",\n      \"WebFetch\",\n      \"mcp__*\"\n    ]\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "check": "review-stop",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "ok, 0 warning(s)\n",
+      "stderr": ""
+    },
+    {
+      "check": "four-call-cycle",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "stdout": "{\n  \"calls\": 8,\n  \"maxRepeats\": 2,\n  \"loop\": true,\n  \"findings\": [\n    {\n      \"kind\": \"cycle\",\n      \"cycleLength\": 4,\n      \"count\": 2,\n      \"calls\": [\n        {\n          \"tool\": \"Read\",\n          \"args\": {\n            \"file_path\": \"src/index.js\"\n          }\n        },\n        {\n          \"tool\": \"Edit\",\n          \"args\": {\n            \"file_path\": \"src/index.js\",\n            \"old_string\": \"x\",\n            \"new_string\": \"y\"\n          }\n        },\n        {\n          \"tool\": \"WebFetch\",\n          \"args\": {\n            \"url\": \"https://docs.github.com/en/rest\"\n          }\n        },\n        {\n          \"tool\": \"mcp__github__get_pull_request\",\n          \"args\": {\n            \"owner\": \"example\",\n            \"repo\": \"example\",\n            \"pull_number\": 1\n          }\n        }\n      ],\n      \"lines\": [\n        1,\n        2,\n        3,\n        4,\n        5,\n        6,\n        7,\n        8\n      ]\n    }\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "check": "nonloop",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "stdout": "{\n  \"calls\": 4,\n  \"maxRepeats\": 2,\n  \"loop\": false,\n  \"findings\": []\n}\n",
+      "stderr": ""
+    }
+  ]
+}
