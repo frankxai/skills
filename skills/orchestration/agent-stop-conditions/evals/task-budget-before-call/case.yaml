@@ -1,0 +1,21 @@
+schema_version: "1.1"
+name: task-budget-before-call
+description: Outcome case. The answer must move the budget check before the call and reserve the call's maximum cost.
+tags: [task]
+expected_outcome: Says the after-call check overshoots by up to one call and that the check must happen before the call by reserving the maximum expected cost of that call.
+runs: 1
+execution:
+  prompt: "My agent loop adds each model call's cost to a running total after the call returns and stops once the total passes $5. Does that cap spend at $5? Short answer."
+  max_turns: 6
+  allowed_tools: [Skill, Read]
+graders:
+  - name: says-check-before-call
+    type: regex
+    target: last_message
+    pattern: '(before (the|each|every|a) (model )?call|reserv(e|ing|ation))'
+    flags: i
+    weight: 2
+  - name: skill-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?agent-stop-conditions"'

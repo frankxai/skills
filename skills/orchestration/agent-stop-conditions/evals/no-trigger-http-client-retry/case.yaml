@@ -1,0 +1,16 @@
+schema_version: "1.1"
+name: no-trigger-http-client-retry
+description: "Should NOT trigger agent-stop-conditions. (plain HTTP client config, no agent loop)"
+tags: [trigger, should-not-trigger]
+runs: 1
+execution:
+  prompt: "set a 5 second timeout and 2 retries on this axios instance in my express app"
+  max_turns: 4
+  allowed_tools: [Skill, Read]
+graders:
+  - name: skill-not-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?agent-stop-conditions"'
+    min: 0
+    max: 0

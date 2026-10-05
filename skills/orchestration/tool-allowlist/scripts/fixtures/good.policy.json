@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "default": "deny",
+  "description": "Code-review agent: reads the diff and source, runs tests, fixes inside src, never publishes.",
+  "allow": [
+    { "tool": "shell", "pattern": "npm run test *", "why": "run the test suite the review asks about" },
+    { "tool": "shell", "pattern": "git diff *", "why": "read the change under review" },
+    { "tool": "read", "pattern": "src/**", "why": "review reads the source tree" },
+    { "tool": "edit", "pattern": "src/**", "why": "fixes land in src only" },
+    { "tool": "fetch", "pattern": "docs.github.com", "why": "look up GitHub API behaviour" },
+    { "tool": "mcp", "pattern": "github/get_*", "why": "read pull request metadata; no write tools" }
+  ],
+  "ask": [
+    { "tool": "shell", "pattern": "git commit *", "why": "a person confirms each commit" }
+  ],
+  "deny": [
+    { "tool": "read", "pattern": ".env", "why": "credentials" },
+    { "tool": "read", "pattern": ".env.*", "why": "credentials" },
+    { "tool": "read", "pattern": "~/.ssh/**", "why": "private keys" },
+    { "tool": "read", "pattern": "*.pem", "why": "private keys and certificates" },
+    { "tool": "shell", "pattern": "git push *", "why": "a review agent never publishes" },
+    { "tool": "shell", "pattern": "curl *", "why": "network goes through the fetch domain rules only" },
+    {"tool": "edit", "pattern": ".env", "why": "credentials"},
+    {"tool": "edit", "pattern": ".env.*", "why": "credentials"},
+    {"tool": "edit", "pattern": "~/.ssh/**", "why": "private keys"},
+    {"tool": "edit", "pattern": "*.pem", "why": "private keys and certificates"}
+  ]
+}

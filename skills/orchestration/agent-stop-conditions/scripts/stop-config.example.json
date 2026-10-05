@@ -1,0 +1,11 @@
+{
+  "maxTurns": 30,
+  "maxBudgetUsd": 5,
+  "budgetCheck": "before-call",
+  "perCallReserveUsd": 0.5,
+  "wallClockSeconds": 1800,
+  "retry": { "max": 2, "idempotentOnly": true, "idempotencyKey": true },
+  "errorWindow": { "size": 10, "maxErrors": 3 },
+  "loopDetection": { "window": 20, "maxRepeats": 3 },
+  "onLimit": "escalate"
+}

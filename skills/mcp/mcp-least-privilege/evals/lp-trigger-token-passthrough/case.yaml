@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: lp-trigger-token-passthrough
+description: "Should trigger mcp-least-privilege."
+tags: [trigger, should-trigger]
+runs: 1
+execution:
+  prompt: "my MCP server wraps the GitHub API. can I just forward the bearer token the MCP client sends me straight to GitHub?"
+  max_turns: 6
+  allowed_tools: [Skill, Read]
+graders:
+  - name: skill-fired
+    type: tool_used
+    tool: Skill
+    input_match: '"skill"\s*:\s*"(?:[\w-]+:)?mcp-least-privilege"'
