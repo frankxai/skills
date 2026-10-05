@@ -1,0 +1,7 @@
+{
+  "name": "starlight-architect",
+  "version": "1.0.0",
+  "description": "Enterprise AI architecture, MCP building, model routing, swarm orchestration, and context engineering.",
+  "author": "Frank Riemer",
+  "skills": "./skills"
+}

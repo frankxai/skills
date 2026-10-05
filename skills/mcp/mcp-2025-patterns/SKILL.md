@@ -1,6 +1,6 @@
 ---
 name: mcp-2025-patterns
-description: Current best practices for Model Context Protocol server design, implementation, and integration. Updated patterns for 2025 MCP ecosystem including multi-server orchestration, security, and performance.
+description: Current best practices for Model Context Protocol server design, implementation, and integration. Updated patterns for 2025 MCP ecosystem including multi-server orchestration, security, and performance. Use when designing, implementing, or reviewing an MCP server, or when wiring multiple MCP servers together.
 version: 1.0.0
 ---
 
