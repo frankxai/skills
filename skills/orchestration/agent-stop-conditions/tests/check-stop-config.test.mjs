@@ -64,6 +64,14 @@ const errorCases = [
   ['loopDetection window cannot hold four repeated cycles', merge({ loopDetection: { window: 11, maxRepeats: 3 } }), 'loopDetection.window'],
   ['onLimit missing', without('onLimit'), 'onLimit'],
   ['onLimit unknown', merge({ onLimit: 'retry' }), 'onLimit'],
+
+  ['retry not an object', merge({ retry: "yes" }), 'retry'],
+  ['retry.max not non-negative integer', merge({ retry: { max: -1 } }), 'retry.max'],
+  ['errorWindow not an object', merge({ errorWindow: "yes" }), 'errorWindow'],
+  ['errorWindow maxErrors below 1', merge({ errorWindow: { size: 3, maxErrors: 0 } }), 'errorWindow.maxErrors'],
+  ['loopDetection not an object', merge({ loopDetection: "yes" }), 'loopDetection'],
+  ['loopDetection maxRepeats below 2', merge({ loopDetection: { window: 20, maxRepeats: 1 } }), 'loopDetection.maxRepeats'],
+  ['wallClockSeconds negative', merge({ wallClockSeconds: -1 }), 'wallClockSeconds'],
 ];
 
 for (const [name, cfg, field] of errorCases) {
@@ -89,4 +97,10 @@ test('after-call is rejected because it overshoots, not merely as an unknown val
 
 test('a JSON array is not a config and exits 2', () => {
   assert.equal(run(null, '[]').code, 2);
+});
+
+test('no arguments exits 2 with usage', () => {
+  const r = spawnSync(process.execPath, [SCRIPT], { encoding: 'utf8' });
+  assert.equal(r.status, 2);
+  assert.match(r.stdout + r.stderr, /usage: node check-stop-config.mjs <config.json>/);
 });
