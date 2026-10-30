@@ -1,0 +1,22 @@
+{
+  "name": "starlight-architect",
+  "version": "1.0.0",
+  "description": "Fifteen skills for AI architects: MCP design, orchestration, model routing, context engineering and design review for agent systems in production.",
+  "author": {
+    "name": "Frank Riemer",
+    "url": "https://frankx.ai"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/frankxai/skills",
+  "repository": "https://github.com/frankxai/skills",
+  "keywords": ["mcp", "orchestration", "model-routing", "context-engineering", "architecture", "evals"],
+  "skills": [
+    "./skills/context",
+    "./skills/frameworks",
+    "./skills/mcp",
+    "./skills/models",
+    "./skills/orchestration",
+    "./skills/reviews",
+    "./skills/tools"
+  ]
+}

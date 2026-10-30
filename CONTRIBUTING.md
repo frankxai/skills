@@ -12,7 +12,8 @@ Start with a [skill request](https://github.com/frankxai/skills/issues/new/choos
    ---
    name: <kebab-case, must equal the folder name>
    description: <when this fires — the trigger surface, max 1024 chars>
-   version: 1.0.0   # optional
+   metadata:        # optional
+     version: "1.0.0"
    ---
    ```
    The description tells the model *when* to fire, not what the file contains.
