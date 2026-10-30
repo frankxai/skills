@@ -3,7 +3,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = path.join(import.meta.dirname, '..', 'skills');
-const ALLOWED_KEYS = new Set(['name', 'description', 'version', 'argument-hint', 'allowed-tools']);
+// claude.ai, Cowork and the Skills API refuse any top-level key outside name, description, license,
+// compatibility, metadata and allowed-tools, so version lives under metadata. argument-hint is
+// Claude Code only and stays allowed for the plugin.
+const ALLOWED_KEYS = new Set(['name', 'description', 'metadata', 'argument-hint', 'allowed-tools']);
 const BANNED = [
   [/[A-Z]:\\Users\\/i, 'windows user path'],
   [/\/c\/Users\//i, 'msys user path'],
