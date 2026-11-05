@@ -9,6 +9,13 @@ Agent skills for people accountable for AI systems in production — straight fr
 npx skills add frankxai/skills
 ```
 
+Claude Code plugin install, inside a session:
+
+```sh
+/plugin marketplace add frankxai/skills
+/plugin install starlight-architect@frankx-architect-skills
+```
+
 One command, ~30 seconds. Works with Claude Code, Cursor, Gemini CLI, Windsurf, and Codex — any harness that reads `SKILL.md`.
 
 ## The four ways enterprise AI agent initiatives die

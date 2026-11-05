@@ -1,8 +1,9 @@
 ---
 name: mcp-least-privilege
 description: Use when building, auditing, or reviewing the authorization of an MCP server - "is my MCP server's OAuth set up right", "probe my remote MCP endpoint", "what scopes should my MCP server advertise", "protected resource metadata", "WWW-Authenticate for MCP", "can my MCP server pass the user's token to an upstream API", "should I cache MCP auth checks", or scoping an MCP server's tools and credentials before production. Do NOT use for deciding which tools an agent may call (use tool-allowlist), for building an OAuth authorization server, or for general MCP server design with no security question (use mcp-architecture).
-version: 2.0.0
 argument-hint: "[url of the MCP endpoint to probe]"
+metadata:
+  version: "2.0.0"
 ---
 
 # MCP least privilege

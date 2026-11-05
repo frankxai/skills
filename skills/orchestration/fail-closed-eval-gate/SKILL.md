@@ -1,7 +1,8 @@
 ---
 name: fail-closed-eval-gate
-version: 2.0.0
 description: "Use when a Claude Code plugin or skill change is about to merge or release and CI must block it unless the plugin measurably beats the no-plugin baseline. Fires on: 'gate this release on evals', 'fail CI if the plugin regresses', 'claude plugin eval passed but the delta is negative', 'can I trust this results.json', 'the eval run was partial, can we ship', 'set up claude plugin eval in GitHub Actions', 'my eval gate always passes'. Also use when reviewing an existing agent eval gate that cannot fail. Do not use for ordinary unit-test or lint CI, for skill-creator evals.json or promptfoo suites (claude plugin eval reads neither), or for grading one conversation by hand."
+metadata:
+  version: "2.0.0"
 ---
 
 # Fail-closed eval gate

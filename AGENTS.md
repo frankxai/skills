@@ -9,7 +9,7 @@ Public skills catalog. Everything here ships to strangers' machines via `npx ski
 
 ## Skill rules
 
-- Frontmatter keys: `name` (kebab-case, must equal the folder name), `description` (the trigger surface, max 1024 chars), optional `version`, `argument-hint`, `allowed-tools`. Nothing else.
+- Frontmatter keys: `name` (kebab-case, must equal the folder name), `description` (the trigger surface, max 1024 chars), optional `metadata` (put `version` here, as `metadata.version`), `argument-hint`, `allowed-tools`. Nothing else: claude.ai and the Skills API refuse any other top-level key.
 - The description says WHEN to fire, not what the file contains.
 - Bodies are portable: no personal paths, no machine-specific setup, no references to private repos or internal systems.
 - If a skill needs a paid account or API key, its first section states that; env-var patterns only, never literal credentials.

@@ -1,0 +1,15 @@
+{
+  "name": "frankx-architect-skills",
+  "owner": {
+    "name": "Frank Riemer",
+    "url": "https://frankx.ai"
+  },
+  "description": "Agent skills for AI architects: MCP, orchestration, model routing and context engineering.",
+  "plugins": [
+    {
+      "name": "starlight-architect",
+      "source": "./",
+      "description": "Skills for AI architects: MCP design, orchestration, model routing, context engineering and design review."
+    }
+  ]
+}
