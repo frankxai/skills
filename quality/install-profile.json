@@ -1,0 +1,11 @@
+{
+  "sourceRoot": ".",
+  "skills": [
+    "skills/orchestration/fail-closed-eval-gate",
+    "skills/orchestration/run-receipt"
+  ],
+  "targets": [
+    "codex",
+    "claude-code"
+  ]
+}
