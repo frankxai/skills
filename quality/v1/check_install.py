@@ -86,7 +86,9 @@ def main():
     parser.add_argument("--cli", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
-    profile = json.loads(args.profile.read_text())
+    # Read the profile once: the digest in the receipt must be of the bytes that were parsed and executed.
+    profile_bytes = args.profile.read_bytes()
+    profile = json.loads(profile_bytes)
     revision = run(["git", "rev-parse", "--verify", args.revision+"^{commit}"], args.repo)
     paths = [relative(item) for item in profile["skills"]]
     targets = profile["targets"]
@@ -117,7 +119,7 @@ def main():
         version = run([cli, "--version"], root, {"PATH":os.environ["PATH"], "HOME":temp, "DO_NOT_TRACK":"1"})
     receipt = {"schemaVersion": 1, "dimension":"installer-roundtrip", "sourceRevision":revision,
                "observedAt":datetime.now(timezone.utc).isoformat(), "installerVersion":version,
-               "profileSha256":hashlib.sha256(args.profile.read_bytes()).hexdigest(), "results":rows}
+               "profileSha256":hashlib.sha256(profile_bytes).hexdigest(), "results":rows}
     args.output.write_text(json.dumps(receipt, indent=2)+"\n")
     print(f"{sum(row['status']=='pass' for row in rows)}/{len(rows)} installer round trips passed")
     return any(row["status"] != "pass" for row in rows)
