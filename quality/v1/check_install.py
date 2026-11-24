@@ -21,7 +21,8 @@ TARGETS = {
 
 
 def run(command, cwd, env=None):
-    result = subprocess.run(command, cwd=cwd, env=env, capture_output=True, text=True, timeout=60)
+    result = subprocess.run(command, cwd=cwd, env=env, capture_output=True,
+                            encoding="utf-8", errors="replace", timeout=60)
     if result.returncode:
         raise ValueError(f"{Path(command[0]).name} {command[1]} failed ({result.returncode}): "
                          + (result.stderr or result.stdout)[-600:])
@@ -47,15 +48,25 @@ def relative(value):
     return path
 
 
+def child_env(home):
+    env = {"PATH": os.environ["PATH"], "HOME": str(home), "CI": "1", "NO_COLOR": "1",
+           "XDG_CONFIG_HOME": str(home / "config"), "CODEX_HOME": str(home / "codex"),
+           "DISABLE_TELEMETRY": "1", "DO_NOT_TRACK": "1"}
+    if os.name == "nt":
+        # Node needs the Windows system directory to initialize its crypto provider.
+        env.update(SystemRoot=os.environ["SystemRoot"], USERPROFILE=str(home),
+                   APPDATA=str(home / "AppData" / "Roaming"),
+                   LOCALAPPDATA=str(home / "AppData" / "Local"))
+    return env
+
+
 def check_one(source, path, target, cli, root):
     name = path.name
     project = root / "project"
     home = root / "home"
     project.mkdir()
     home.mkdir()
-    env = {"PATH": os.environ["PATH"], "HOME": str(home), "CI": "1", "NO_COLOR": "1",
-           "XDG_CONFIG_HOME": str(home/"config"), "CODEX_HOME": str(home/"codex"),
-           "DISABLE_TELEMETRY": "1", "DO_NOT_TRACK": "1"}
+    env = child_env(home)
     run(["git", "init", "-q"], project, env)
     expected = inventory(source / path)
     run([cli, "add", str(source), "--agent", target, "--skill", name, "--copy", "--yes"], project, env)
@@ -116,7 +127,7 @@ def main():
                     except (OSError, ValueError, subprocess.TimeoutExpired) as error:
                         row.update(status="fail", detail=str(error).replace(str(root), "<temp>"))
                 rows.append(row)
-        version = run([cli, "--version"], root, {"PATH":os.environ["PATH"], "HOME":temp, "DO_NOT_TRACK":"1"})
+        version = run([cli, "--version"], root, child_env(root))
     receipt = {"schemaVersion": 1, "dimension":"installer-roundtrip", "sourceRevision":revision,
                "observedAt":datetime.now(timezone.utc).isoformat(), "installerVersion":version,
                "profileSha256":hashlib.sha256(profile_bytes).hexdigest(), "results":rows}
