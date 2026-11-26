@@ -1,7 +1,12 @@
 import hashlib
+import os
+import sys
+import tempfile
+from pathlib import Path
 import unittest
 from jsonschema import ValidationError
 
+import check_install
 from verify_receipt import verify
 
 
@@ -47,3 +52,20 @@ class EvidenceTests(unittest.TestCase):
         for key in ("sourceRevision", "profileSha256"):
             with self.subTest(key=key), self.assertRaises(ValueError):
                 verify(dict(self.record, **{key:"e"*len(self.record[key])}), self.profile, self.rev)
+
+
+class InstallerRuntimeTests(unittest.TestCase):
+    def test_cli_output_uses_utf8(self):
+        with tempfile.TemporaryDirectory() as directory:
+            command = [sys.executable, "-c", "import sys; sys.stdout.buffer.write(bytes.fromhex('e29c93'))"]
+            self.assertEqual(check_install.run(command, directory), "\u2713")
+
+    @unittest.skipUnless(os.name == "nt", "Windows runtime environment")
+    def test_windows_child_uses_disposable_profile(self):
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            env = check_install.child_env(home)
+            self.assertEqual(env["SystemRoot"], os.environ["SystemRoot"])
+            self.assertEqual(Path(env["USERPROFILE"]), home)
+            for name in ("APPDATA", "LOCALAPPDATA", "CODEX_HOME", "XDG_CONFIG_HOME"):
+                self.assertTrue(Path(env[name]).is_relative_to(home), name)
