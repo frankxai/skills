@@ -1,0 +1,156 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "dimension": {
+      "const": "installer-roundtrip"
+    },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "observedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "installerVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profileSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "skill": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payload": {
+            "const": "pass"
+          },
+          "fileCount": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "entrypointSha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "projectClean": {
+            "type": "boolean"
+          },
+          "scopedRemoval": {
+            "enum": [
+              "pass",
+              "residue"
+            ]
+          }
+        },
+        "required": [
+          "skill",
+          "target",
+          "status"
+        ],
+        "oneOf": [
+          {
+            "properties": {
+              "status": {
+                "const": "pass"
+              },
+              "projectClean": {
+                "const": true
+              },
+              "scopedRemoval": {
+                "const": "pass"
+              }
+            },
+            "required": [
+              "payload",
+              "fileCount",
+              "entrypointSha256",
+              "projectClean",
+              "scopedRemoval"
+            ],
+            "not": {
+              "required": [
+                "detail"
+              ]
+            }
+          },
+          {
+            "properties": {
+              "status": {
+                "const": "fail"
+              }
+            },
+            "anyOf": [
+              {
+                "required": [
+                  "detail"
+                ]
+              },
+              {
+                "properties": {
+                  "scopedRemoval": {
+                    "const": "residue"
+                  }
+                },
+                "required": [
+                  "scopedRemoval",
+                  "payload",
+                  "projectClean",
+                  "fileCount",
+                  "entrypointSha256"
+                ]
+              },
+              {
+                "properties": {
+                  "projectClean": {
+                    "const": false
+                  }
+                },
+                "required": [
+                  "projectClean"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "dimension",
+    "sourceRevision",
+    "observedAt",
+    "installerVersion",
+    "profileSha256",
+    "results"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

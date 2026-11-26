@@ -100,3 +100,5 @@ One skill promoted from my private `~/.claude` set every week, with a note on th
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+Maintainers can verify a skill's installed bytes and removal behavior using the [Agent Skills Quality Standard and disposable installer probe](quality/v1/README.md).
